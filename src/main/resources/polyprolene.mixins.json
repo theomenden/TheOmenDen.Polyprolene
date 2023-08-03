@@ -1,11 +1,11 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "theomenden.com.copolymerization.mixin",
+  "package": "theomenden.polyprolene.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-  ],
-  "client": [
+    "KeyBindAccessorMixin",
+    "KeyBindingMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -1,4 +1,4 @@
-package theomenden.com.copolymerization.mixin;
+package theomenden.polyprolene.mixin;
 
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import theomenden.com.copolymerization.manager.KeyBindingsManager;
+import theomenden.polyprolene.manager.KeyBindingsManager;
 
 @Mixin(value = KeyBinding.class, priority = -5000)
 public abstract class KeyBindingMixin {

@@ -1,4 +1,4 @@
-package theomenden.com.copolymerization.mixin;
+package theomenden.polyprolene.mixin;
 
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;

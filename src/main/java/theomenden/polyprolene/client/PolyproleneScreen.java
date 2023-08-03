@@ -1,4 +1,4 @@
-package theomenden.com.copolymerization.client;
+package theomenden.polyprolene.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
@@ -12,13 +12,13 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
-import theomenden.com.copolymerization.manager.KeyBindingsManager;
-import theomenden.com.copolymerization.mixin.KeyBindAccessorMixin;
-import theomenden.com.copolymerization.utils.MathUtils;
+import theomenden.polyprolene.manager.KeyBindingsManager;
+import theomenden.polyprolene.mixin.KeyBindAccessorMixin;
+import theomenden.polyprolene.utils.MathUtils;
 
 import java.util.stream.IntStream;
 
-public class CopolymerizationScreen extends Screen {
+public class PolyproleneScreen extends Screen {
     int timeIn = 0;
     int slotSelected = -1;
 
@@ -26,7 +26,7 @@ public class CopolymerizationScreen extends Screen {
 
     final MinecraftClient minecraftClient;
 
-    public CopolymerizationScreen() {
+    public PolyproleneScreen() {
         super(NarratorManager.EMPTY);
 
         minecraftClient = MinecraftClient.getInstance();
@@ -42,7 +42,8 @@ public class CopolymerizationScreen extends Screen {
 
         double mouseAngleAt = calculateMouseAngle(xCoord, yCoord, mouseX, mouseY);
 
-        int conflictingSegments = KeyBindingsManager.getConflictingBindingsForKey(conflictedKeyBinding).size();
+        int conflictingSegments = KeyBindingsManager
+                .getConflictingBindingsForKey(conflictedKeyBinding).size();
 
         final float conflictingSegmentInv = 1.0f / conflictingSegments;
 

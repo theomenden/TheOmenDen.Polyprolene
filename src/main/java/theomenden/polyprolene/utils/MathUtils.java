@@ -1,4 +1,4 @@
-package theomenden.com.copolymerization.utils;
+package theomenden.polyprolene.utils;
 
 public final class MathUtils {
     private MathUtils(){}

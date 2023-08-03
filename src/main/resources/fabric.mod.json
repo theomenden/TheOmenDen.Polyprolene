@@ -8,25 +8,37 @@
     "Alu"
   ],
   "contact": {
-    "repo": "https://github.com/andre/TheOmenDen.Copolymerization"
+    "repo": "https://github.com/andre/TheOmenDen.Polyprolene"
   },
   "license": "GPL-3.0",
-  "icon": "assets/copolymerization/icon.png",
+  "icon": "assets/Prolene.png",
   "environment": "client",
   "entrypoints": {
     "client": [
-      "theomenden.com.copolymerization.client.CopolymerizationClient"
-    ],
-    "main": [
-      "theomenden.com.copolymerization.Copolymerization"
+      "theomenden.polyprolene.client.PolyproleneClient"
     ]
   },
   "mixins": [
-    "copolymerization.mixins.json"
+    "polyprolene.mixins.json"
   ],
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.gg/aSfgGCYKGA"
+      },
+      "parent": {
+        "id": "polyprolene",
+        "name": "Polyprolene",
+        "description": "A simple keybind conflict display",
+        "icon": "assets/Prolene.png"
+      },
+      "update_checker": true
+    }
+  },
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
-    "minecraft": "${minecraft_version}"
+    "modmenu":  ">=7.2.1",
+    "minecraft": "*"
   }
 }
