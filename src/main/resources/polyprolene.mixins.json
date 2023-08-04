@@ -5,7 +5,8 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "KeyBindAccessorMixin",
-    "KeyBindingMixin"
+    "KeyBindingMixin",
+    "StickyKeyBindingMixin"
   ],
   "injectors": {
     "defaultRequire": 1

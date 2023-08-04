@@ -16,6 +16,11 @@ import java.util.function.Supplier;
 public enum ModifierKeys implements StringIdentifiable {
     CONTROL {
         @Override
+        public String asString() {
+            return "CONTROL";
+        }
+
+        @Override
         public boolean isMatchedBy(InputUtil.Key key) {
             int keyCode = key.getCode();
             if(MinecraftClient.IS_SYSTEM_MAC) {
@@ -32,15 +37,19 @@ public enum ModifierKeys implements StringIdentifiable {
         }
 
         @Override
-        public String getLocalizedName(int keyCode) {
-            return
+        public Text  getLocalizedName(InputUtil.Key key, Supplier<Text> defaultedValue) {
+            return Text.literal("Key code: " + key + defaultedValue.get());
         }
 
     },
     SHIFT {
         @Override
-        public boolean isMatchedBy(int keyCode) {
-            return false;
+        public boolean isMatchedBy(InputUtil.Key key) {
+            var keyCode = key.getCode();
+
+            return keyCode == GLFW.GLFW_KEY_LEFT_SHIFT
+                    || keyCode == GLFW.GLFW_KEY_RIGHT_SHIFT;
+
         }
 
         @Override
@@ -52,9 +61,17 @@ public enum ModifierKeys implements StringIdentifiable {
         public Text getLocalizedName(InputUtil.Key key, Supplier<Text> defaultedValue) {
             return Text.literal(defaultedValue.get().getString());
         }
-
+        @Override
+        public String asString() {
+            return "SHIFT";
+        }
     },
     ALT {
+        @Override
+        public String asString() {
+            return "ALT";
+        }
+
         @Override
         public boolean isMatchedBy(InputUtil.Key key) {
             return key.getCode() == GLFW.GLFW_KEY_LEFT_ALT
@@ -68,11 +85,16 @@ public enum ModifierKeys implements StringIdentifiable {
 
         @Override
         public Text getLocalizedName(InputUtil.Key key, Supplier<Text> defaultedValue) {
-            return
+            return Text.literal(key.getLocalizedText().getString() + defaultedValue.get().getString());
         }
 
     },
     NONE {
+        @Override
+        public String asString() {
+            return "";
+        }
+
         @Override
         public boolean isMatchedBy(InputUtil.Key key) {
             return false;
@@ -93,7 +115,6 @@ public enum ModifierKeys implements StringIdentifiable {
     };
 
     public static final ModifierKeys[] MODIFIER_KEY_VALUES = {SHIFT, CONTROL, ALT};
-
     public abstract boolean isMatchedBy(InputUtil.Key key);
     public abstract boolean isActivated(@Nullable IKeyConflictDeterminator conflictDeterminator);
     public abstract Text getLocalizedName(InputUtil.Key key, Supplier<Text> defaultedValue);
