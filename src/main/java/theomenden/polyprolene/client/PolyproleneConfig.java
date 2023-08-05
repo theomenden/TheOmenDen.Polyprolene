@@ -4,7 +4,7 @@ import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 
-@Config(name = "polyprolene")
+@Config(name = PolyproleneClient.MODID)
 public class PolyproleneConfig implements ConfigData {
     public boolean hideCurrentlyBoundKeys = false;
     public int maximumAutoSuggestions = 5;

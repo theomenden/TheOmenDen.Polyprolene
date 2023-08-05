@@ -10,12 +10,6 @@
       "links": {
         "modmenu.discord": "https://discord.gg/aSfgGCYKGA"
       },
-      "parent": {
-        "id": "polyprolene",
-        "name": "Polyprolene",
-        "description": "A simple keybind conflict display",
-        "icon": "assets/Prolene.png"
-      },
       "update_checker": true
     }
   },
@@ -29,11 +23,14 @@
   "entrypoints": {
     "client": [
       "theomenden.polyprolene.client.PolyproleneClient"
+    ],
+    "modmenu": [
+      "theomenden.polyprolene.client.PolyproleneModMenu"
     ]
   },
   "environment": "client",
   "icon": "assets/Prolene.png",
-  "id": "copolymerization",
+  "id": "polyprolene",
   "license": "GPL-3.0",
   "mixins": [
     "polyprolene.mixins.json"

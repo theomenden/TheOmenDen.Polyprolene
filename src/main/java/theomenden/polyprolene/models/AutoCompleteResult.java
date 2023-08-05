@@ -8,10 +8,7 @@ import org.apache.logging.log4j.Logger;
 import theomenden.polyprolene.interfaces.ISuggestionProvider;
 import theomenden.polyprolene.utils.LoggerUtils;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -27,7 +24,7 @@ public class AutoCompleteResult {
     private List<KeyBindSuggestion> allKeyBindSuggestions = Lists.newArrayList();
     private List<KeyBindSuggestion> currentSuggestions = Lists.newArrayList();
 
-    public static List<ISuggestionProvider> suggestionProviders = Collections.emptyList();
+    public static List<ISuggestionProvider> suggestionProviders = Lists.newArrayList();
     public static final Logger LOGGER = LogManager.getLogger(MODID);
     public static List<String> suggestionHistory = Collections.emptyList();
     public static List<String> favorites = Collections.emptyList();
@@ -78,18 +75,17 @@ public class AutoCompleteResult {
     }
 
     public static void saveDataToFiles() {
-
         CompletableFuture<Void> historyFuture = CompletableFuture
                 .runAsync(() -> writeToExistingFile("history"))
                 .exceptionally(e -> {
-                             // Handle exception if any System.err.println("Failed to write data: " + e.getMessage());
+                    LoggerUtils.getLoggerInstance().info(e.getMessage());
                              return null;
                          })
-                .thenRun(() -> LoggerUtils.getLoggerInstance().info("History written successfully."));
+                .thenRun(() -> LoggerUtils.getLoggerInstance().info(" History written successfully."));
 
         CompletableFuture<Void> favoritesFuture =CompletableFuture.runAsync(() -> writeToExistingFile("favorites"))
                          .exceptionally(e -> {
-                             // Handle exception if any System.err.println("Failed to write data: " + e.getMessage());
+                             LoggerUtils.getLoggerInstance().info(e.getMessage());
                              return null;
                          })
                          .thenRun(() -> LoggerUtils.getLoggerInstance().info("Current Favorites written successfully."));
@@ -121,8 +117,10 @@ public class AutoCompleteResult {
 
 
     private static Path getBindingsFile(String suffix) {
-        return Paths.get(MinecraftClient.getInstance().runDirectory.getPath(),
-                "polyprolene_", suffix, ".txt");
+        var dir = MinecraftClient.getInstance().runDirectory;
+        new File(dir.getPath() +"/polyprolene").mkdirs();
+
+        return Paths.get(dir.getPath(), "polyprolene", suffix +".txt");
     }
 
 }

@@ -7,17 +7,12 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
 import theomenden.polyprolene.models.AutoCompleteResult;
-import theomenden.polyprolene.models.KeyBindSuggestion;
 import theomenden.polyprolene.models.VanillaKeyBindingSuggestions;
-
-import java.util.List;
+import theomenden.polyprolene.utils.LoggerUtils;
 
 public class PolyproleneClient implements ClientModInitializer {
 
@@ -27,13 +22,12 @@ public class PolyproleneClient implements ClientModInitializer {
 
     public static final String MODID = "polyprolene";
 
-    public static final Logger LOGGER = LogManager.getLogger(MODID);
 
     @Override
     public void onInitializeClient() {
         AutoConfig.register(PolyproleneConfig.class, GsonConfigSerializer::new);
         configuration = AutoConfig.getConfigHolder(PolyproleneConfig.class).getConfig();
-        LOGGER.info("Polyprolene is coming for your keybinds ⍉");
+        LoggerUtils.getLoggerInstance().info("Polyprolene is coming for your keybinds >:D");
 
         launchingKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.polyprolene.launcher",
@@ -51,7 +45,7 @@ public class PolyproleneClient implements ClientModInitializer {
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if(launchingKey.wasPressed()) {
-                client.setScreen(new PolyproleneScreen());
+                openNewPolyproleneScreen(client);
             }
         });
 
@@ -61,10 +55,10 @@ public class PolyproleneClient implements ClientModInitializer {
         AutoCompleteResult.suggestionProviders.add(createVanillaKeyBindingSuggestions());
     }
 
-    protected VanillaKeyBindingSuggestions createVanillaKeyBindingSuggestions() {
+    public VanillaKeyBindingSuggestions createVanillaKeyBindingSuggestions() {
         return new VanillaKeyBindingSuggestions();
     }
-    protected void openNewPolyproleneScreen(MinecraftClient client) {
+    public void openNewPolyproleneScreen(MinecraftClient client) {
         client.setScreen(new PolyproleneScreen());
     }
 }

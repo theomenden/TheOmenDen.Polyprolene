@@ -1,7 +1,5 @@
 package theomenden.polyprolene.utils;
 
-import org.apache.logging.log4j.core.appender.rolling.action.IfAll;
-import org.slf4j.LoggerFactory;
 import theomenden.polyprolene.client.PolyproleneClient;
 
 import java.time.ZoneId;
@@ -24,14 +22,24 @@ public class LoggerUtils {
     }
 
     private static class LogFormat extends Formatter {
+
+        private static final DateTimeFormatter TimingFormat = DateTimeFormatter.ofPattern("HH:mm:ss");
+
+
+
         @Override
         public String format(LogRecord record) {
             var currentZonedTime = ZonedDateTime.ofInstant(record.getInstant(), ZoneId.systemDefault());
-            var timings = "[" + currentZonedTime.format(DateTimeFormatter.ISO_LOCAL_TIME) +"]";
-            var recordingInformation = "[" + PolyproleneClient.MODID + ">" + record.getLevel().getLocalizedName() + " " + record.getSourceClassName() + "]:";
+            var timings = "[" + TimingFormat.format(currentZonedTime) +"] \u001B[32m";
+            var recordingInformation = "[" + PolyproleneClient.MODID + "/" + record.getLevel().getLocalizedName() + "]\u001B[36m (" + record.getSourceClassName() + "): \u001B[0m";
             var message = record.getMessage() + "\n";
 
-            return timings + recordingInformation + message;
+            return new StringBuilder()
+                    .append("\u001B[34m")
+                    .append(timings)
+                    .append(recordingInformation)
+                    .append(message)
+                    .toString();
         }
     }
 

@@ -20,7 +20,6 @@ public class KeyBindingsManager {
     private static final Map<InputUtil.Key, List<KeyBinding>> keyMappingConflicts = Maps.newHashMap();
 
     private static final ArrayListMultimap<InputUtil.Key, KeyBinding> keyMappingFix = ArrayListMultimap.create();
-    private static final ModifierKeys[] modifiers = ModifierKeys.MODIFIER_KEY_VALUES;
 
     public static void addKeyToFixingMap(InputUtil.Key key, KeyBinding keyBinding) {
         if(isConflictingKeyBind(key)){
@@ -49,9 +48,7 @@ public class KeyBindingsManager {
                 .stream()
                 .filter(k -> key.equals(k.getKey()))
                 .forEach(
-                        k -> {
-                            k.getValue().setPressed(isPressed);
-                        }
+                        k -> k.getValue().setPressed(isPressed)
                 );
     }
 
