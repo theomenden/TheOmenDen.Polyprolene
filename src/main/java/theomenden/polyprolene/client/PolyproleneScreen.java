@@ -126,7 +126,7 @@ public class PolyproleneScreen extends Screen {
     @Override
     public void tick() {
         super.tick();
-        var mcClientHandle = MinecraftClient
+        long mcClientHandle = MinecraftClient
                 .getInstance()
                 .getWindow()
                 .getHandle();

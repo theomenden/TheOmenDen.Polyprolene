@@ -1,26 +1,10 @@
 {
-  "schemaVersion": 1,
-  "id": "copolymerization",
-  "version": "${version}",
-  "name": "Copolymerization",
-  "description": "A simple, naive attempt at providing a menu for keybind conflicts",
   "authors": [
     "Alu"
   ],
   "contact": {
     "repo": "https://github.com/andre/TheOmenDen.Polyprolene"
   },
-  "license": "GPL-3.0",
-  "icon": "assets/Prolene.png",
-  "environment": "client",
-  "entrypoints": {
-    "client": [
-      "theomenden.polyprolene.client.PolyproleneClient"
-    ]
-  },
-  "mixins": [
-    "polyprolene.mixins.json"
-  ],
   "custom": {
     "modmenu": {
       "links": {
@@ -38,7 +22,23 @@
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
-    "modmenu":  ">=7.2.1",
+    "modmenu": ">=7.2.1",
     "minecraft": "*"
-  }
+  },
+  "description": "A simple, naive attempt at providing a menu for keybind conflicts",
+  "entrypoints": {
+    "client": [
+      "theomenden.polyprolene.client.PolyproleneClient"
+    ]
+  },
+  "environment": "client",
+  "icon": "assets/Prolene.png",
+  "id": "copolymerization",
+  "license": "GPL-3.0",
+  "mixins": [
+    "polyprolene.mixins.json"
+  ],
+  "name": "Polyprolene",
+  "schemaVersion": 1,
+  "version": "${version}"
 }

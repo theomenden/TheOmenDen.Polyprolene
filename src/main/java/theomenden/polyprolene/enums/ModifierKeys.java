@@ -45,10 +45,8 @@ public enum ModifierKeys implements StringIdentifiable {
     SHIFT {
         @Override
         public boolean isMatchedBy(InputUtil.Key key) {
-            var keyCode = key.getCode();
-
-            return keyCode == GLFW.GLFW_KEY_LEFT_SHIFT
-                    || keyCode == GLFW.GLFW_KEY_RIGHT_SHIFT;
+           return key.getCode() == GLFW.GLFW_KEY_LEFT_SHIFT
+                    || key.getCode() == GLFW.GLFW_KEY_RIGHT_SHIFT;
 
         }
 

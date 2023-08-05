@@ -87,7 +87,7 @@ public class KeyBindingsManager {
     }
 
     private static List<KeyBinding> listConflictingKeyBindsForInputKey(InputUtil.Key key) {
-        var allKeys = MinecraftClient.getInstance().options.allKeys;
+        KeyBinding[] allKeys = MinecraftClient.getInstance().options.allKeys;
 
         return Arrays
                 .stream(allKeys)
