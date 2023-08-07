@@ -41,8 +41,6 @@ public class PolyproleneScreen extends Screen {
     private int optionsOffset = 0;
     public int configurableWidth = 250;
     public int lineHeight = 12;
-
-
     int timeIn = 0;
     int slotSelected = -1;
 
@@ -108,19 +106,18 @@ public class PolyproleneScreen extends Screen {
             context.drawTextWithShadow(textRenderer, suggestionAtIndex.category, getX() + configurableWidth - textWidth, y, SUGGESTION_COLOR);
         }
 
-
         super.render(context, mouseX, mouseY, delta);
     }
 
     @Override
     public void tick() {
+        super.tick();
         textField.tick();
 
-        long mcClientHandle = MinecraftClient
+        if (!InputUtil.isKeyPressed(MinecraftClient
                 .getInstance()
                 .getWindow()
-                .getHandle();
-        if (!InputUtil.isKeyPressed(mcClientHandle, conflictedKeyBinding.getCode())) {
+                .getHandle(), conflictedKeyBinding.getCode())) {
             minecraftClient.setScreen(null);
             if (slotSelected != -1) {
                 KeyBinding bind = KeyBindingsManager.getConflictingBindingsForKey(conflictedKeyBinding).get(slotSelected);

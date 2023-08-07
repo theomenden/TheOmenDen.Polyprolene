@@ -2,6 +2,7 @@ package theomenden.polyprolene.enums;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.StringIdentifiable;
+import theomenden.polyprolene.interfaces.IKeyBindingHandler;
 import theomenden.polyprolene.interfaces.IKeyConflictDeterminator;
 
 public enum KeyBindingConflicts implements StringIdentifiable, IKeyConflictDeterminator {
@@ -23,7 +24,6 @@ public enum KeyBindingConflicts implements StringIdentifiable, IKeyConflictDeter
             return MinecraftClient.getInstance().currentScreen != null;
         }
 
-        @Override
         public boolean isAConflictWith(IKeyConflictDeterminator other) {
             return this == other;
         }
