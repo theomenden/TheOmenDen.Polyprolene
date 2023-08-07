@@ -28,7 +28,6 @@ public class KeyBindingsManager {
 
         }
              keyMappingFix.put(key, keyBinding);
-
     }
 
     public static void handleKeyPressed(InputUtil.Key key) {
@@ -76,7 +75,7 @@ public class KeyBindingsManager {
                 : Lists.newArrayList();
     }
     public static void openConflictingKeyBindingsScreen(InputUtil.Key conflictingKey) {
-        var keyMappingsScreen = new PolyproleneScreen();
+        PolyproleneScreen keyMappingsScreen = new PolyproleneScreen();
         keyMappingsScreen.setConflictedKeyBinding(conflictingKey);
         MinecraftClient
                 .getInstance()
