@@ -11,6 +11,8 @@ import theomenden.polyprolene.mixin.KeyBindAccessorMixin;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
+import static theomenden.polyprolene.models.AutoCompleteResult.addToSuggestionHistory;
+
 public class KeyBindSuggestion {
     public Text name;
     public Text category;
@@ -50,7 +52,7 @@ public class KeyBindSuggestion {
         MinecraftClient minecraftClient = MinecraftClient.getInstance();
         GameOptions gameOptions = minecraftClient.options;
 
-        AutoCompleteResult.addToSuggestionHistory(getId());
+        addToSuggestionHistory(getId());
 
         if(initialBinding.equals(getFullscreenKey(gameOptions))) {
             minecraftClient.getWindow().toggleFullscreen();

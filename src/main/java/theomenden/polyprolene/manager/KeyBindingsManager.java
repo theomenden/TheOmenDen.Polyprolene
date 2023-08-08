@@ -76,7 +76,7 @@ public class KeyBindingsManager {
     }
     public static void openConflictingKeyBindingsScreen(InputUtil.Key conflictingKey) {
         PolyproleneScreen keyMappingsScreen = new PolyproleneScreen();
-        keyMappingsScreen.setConflictedKeyBinding(conflictingKey);
+        keyMappingsScreen.setConflictedKey(conflictingKey);
         MinecraftClient
                 .getInstance()
                 .setScreen(keyMappingsScreen);
