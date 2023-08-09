@@ -1,6 +1,5 @@
 package theomenden.polyprolene.enums;
 
-import net.minecraft.client.Keyboard;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.InputUtil;
@@ -23,7 +22,7 @@ public enum ModifierKeys implements StringIdentifiable {
         @Override
         public boolean isMatchedBy(InputUtil.Key key) {
             int keyCode = key.getCode();
-            if(MinecraftClient.IS_SYSTEM_MAC) {
+            if (MinecraftClient.IS_SYSTEM_MAC) {
                 return keyCode == GLFW.GLFW_KEY_LEFT_ALT
                         || keyCode == GLFW.GLFW_KEY_RIGHT_ALT;
             }
@@ -37,7 +36,7 @@ public enum ModifierKeys implements StringIdentifiable {
         }
 
         @Override
-        public Text  getLocalizedName(InputUtil.Key key, Supplier<Text> defaultedValue) {
+        public Text getLocalizedName(InputUtil.Key key, Supplier<Text> defaultedValue) {
             return Text.literal("Key code: " + key + defaultedValue.get());
         }
 
@@ -45,7 +44,7 @@ public enum ModifierKeys implements StringIdentifiable {
     SHIFT {
         @Override
         public boolean isMatchedBy(InputUtil.Key key) {
-           return key.getCode() == GLFW.GLFW_KEY_LEFT_SHIFT
+            return key.getCode() == GLFW.GLFW_KEY_LEFT_SHIFT
                     || key.getCode() == GLFW.GLFW_KEY_RIGHT_SHIFT;
 
         }
@@ -57,8 +56,11 @@ public enum ModifierKeys implements StringIdentifiable {
 
         @Override
         public Text getLocalizedName(InputUtil.Key key, Supplier<Text> defaultedValue) {
-            return Text.literal(defaultedValue.get().getString());
+            return Text.literal(defaultedValue
+                    .get()
+                    .getString());
         }
+
         @Override
         public String asString() {
             return "SHIFT";
@@ -83,7 +85,11 @@ public enum ModifierKeys implements StringIdentifiable {
 
         @Override
         public Text getLocalizedName(InputUtil.Key key, Supplier<Text> defaultedValue) {
-            return Text.literal(key.getLocalizedText().getString() + defaultedValue.get().getString());
+            return Text.literal(key
+                    .getLocalizedText()
+                    .getString() + defaultedValue
+                    .get()
+                    .getString());
         }
 
     },
@@ -102,8 +108,9 @@ public enum ModifierKeys implements StringIdentifiable {
         public boolean isActivated(@Nullable IKeyConflictDeterminator conflictDeterminator) {
             return conflictDeterminator != null
                     && !conflictDeterminator.isAConflictWith(KeyBindingConflicts.IN_GAME)
-                    && Arrays.stream(MODIFIER_KEY_VALUES)
-                             .anyMatch(mk -> mk.isActivated(null));
+                    && Arrays
+                    .stream(MODIFIER_KEY_VALUES)
+                    .anyMatch(mk -> mk.isActivated(null));
         }
 
         @Override
@@ -113,7 +120,24 @@ public enum ModifierKeys implements StringIdentifiable {
     };
 
     public static final ModifierKeys[] MODIFIER_KEY_VALUES = {SHIFT, CONTROL, ALT};
+
+    public static ModifierKeys getActiveModifier() {
+        return Arrays
+                .stream(MODIFIER_KEY_VALUES)
+                .filter(km -> km.isActivated(null))
+                .findFirst()
+                .orElse(NONE);
+    }
+
+    public static boolean isModifierForKeyCode(InputUtil.Key key) {
+        return Arrays
+                .stream(MODIFIER_KEY_VALUES)
+                .anyMatch(km -> km.isMatchedBy(key));
+    }
+
     public abstract boolean isMatchedBy(InputUtil.Key key);
+
     public abstract boolean isActivated(@Nullable IKeyConflictDeterminator conflictDeterminator);
+
     public abstract Text getLocalizedName(InputUtil.Key key, Supplier<Text> defaultedValue);
 }

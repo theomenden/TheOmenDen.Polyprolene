@@ -4,6 +4,7 @@
   "key.polyprolene.favorite": "Mark bind as favorite",
   "text.autoconfig.polyprolene.title": "Polyprolene",
   "text.autoconfig.polyprolene.option.hideCurrentlyBoundKeys": "Only show unassigned binds",
-  "text.autoconfig.polyprolene.option.maximumAutoSuggestions": "Max suggestion count",
+  "text.autoconfig.polyprolene.option.nonConflictKeys": "Allow keybindings with the same keys when that key is pressed",
+  "text.autoconfig.polyprolene.option.maximumAutoSuggestions": "Maximum suggestion count",
   "text.autoconfig.polyprolene.option.backgroundOpacity": "Background opacity"
 }

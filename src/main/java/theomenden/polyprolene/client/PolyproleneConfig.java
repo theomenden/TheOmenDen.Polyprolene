@@ -7,6 +7,7 @@ import me.shedaniel.autoconfig.annotation.ConfigEntry;
 @Config(name = PolyproleneClient.MODID)
 public class PolyproleneConfig implements ConfigData {
     public boolean hideCurrentlyBoundKeys = false;
+    public boolean nonConflictingKeys = false;
     public int maximumAutoSuggestions = 5;
 
     @ConfigEntry.Gui.Excluded

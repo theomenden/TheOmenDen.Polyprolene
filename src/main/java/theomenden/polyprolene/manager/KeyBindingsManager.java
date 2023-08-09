@@ -7,7 +7,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import theomenden.polyprolene.client.PolyproleneScreen;
-import theomenden.polyprolene.enums.ModifierKeys;
 import theomenden.polyprolene.mixin.KeyBindAccessorMixin;
 import theomenden.polyprolene.utils.LoggerUtils;
 
@@ -22,20 +21,24 @@ public class KeyBindingsManager {
     private static final ArrayListMultimap<InputUtil.Key, KeyBinding> keyMappingFix = ArrayListMultimap.create();
 
     public static void addKeyToFixingMap(InputUtil.Key key, KeyBinding keyBinding) {
-        if(isConflictingKeyBind(key)){
-            var logger = LoggerUtils.getLoggerInstance();
-            logger.info("Key " + key.getLocalizedText() + " was found to have a conflicting mapping");
+        if (isConflictingKeyBind(key)) {
+            LoggerUtils
+                    .getLoggerInstance()
+                    .info("Key " + key.getLocalizedText() + " was found to have a conflicting mapping");
 
         }
-             keyMappingFix.put(key, keyBinding);
+        keyMappingFix.put(key, keyBinding);
     }
 
     public static void handleKeyPressed(InputUtil.Key key) {
-        keyMappingFix.entries()
+        keyMappingFix
+                .entries()
                 .stream()
-                .filter(k -> k.getKey().equals(key))
+                .filter(k -> k
+                        .getKey()
+                        .equals(key))
                 .forEach(k -> {
-                    var keyBindAccessor = ((KeyBindAccessorMixin)k);
+                    var keyBindAccessor = ((KeyBindAccessorMixin) k.getValue());
 
                     keyBindAccessor.setTimesPressed(keyBindAccessor.getTimesPressed() + 1);
                 });
@@ -47,7 +50,9 @@ public class KeyBindingsManager {
                 .stream()
                 .filter(k -> key.equals(k.getKey()))
                 .forEach(
-                        k -> k.getValue().setPressed(isPressed)
+                        k -> k
+                                .getValue()
+                                .setPressed(isPressed)
                 );
     }
 
@@ -58,10 +63,11 @@ public class KeyBindingsManager {
     public static boolean isConflictingKeyBind(InputUtil.Key keyToCheck) {
         return keyMappingConflicts.containsKey(keyToCheck);
     }
+
     public static boolean shouldHandleConflictingKeyBinding(InputUtil.Key keyToCheck) {
         var matches = listConflictingKeyBindsForInputKey(keyToCheck);
 
-        if(matches.size() > 1) {
+        if (matches.size() > 1) {
             KeyBindingsManager.keyMappingConflicts.put(keyToCheck, matches);
             return true;
         }
@@ -69,11 +75,13 @@ public class KeyBindingsManager {
         KeyBindingsManager.keyMappingConflicts.remove(keyToCheck);
         return false;
     }
+
     public static List<KeyBinding> getConflictingBindingsForKey(InputUtil.Key keyToCheck) {
         return keyMappingConflicts.containsKey(keyToCheck)
                 ? keyMappingConflicts.get(keyToCheck)
                 : Lists.newArrayList();
     }
+
     public static void openConflictingKeyBindingsScreen(InputUtil.Key conflictingKey) {
         PolyproleneScreen keyMappingsScreen = new PolyproleneScreen();
         keyMappingsScreen.setConflictedKey(conflictingKey);

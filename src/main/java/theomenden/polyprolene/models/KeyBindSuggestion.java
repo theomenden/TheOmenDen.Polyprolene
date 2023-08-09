@@ -63,11 +63,7 @@ public class KeyBindSuggestion {
         }
 
         if(initialBinding.equals(getScreenshotKey(gameOptions))) {
-            takeScreenshot(minecraftClient, consumer -> {
-                minecraftClient.execute(() -> {
-                    minecraftClient.inGameHud.getChatHud().addMessage(consumer);
-                });
-            } );
+            takeScreenshot(minecraftClient, consumer -> minecraftClient.execute(() -> minecraftClient.inGameHud.getChatHud().addMessage(consumer)));
 
             return;
         }

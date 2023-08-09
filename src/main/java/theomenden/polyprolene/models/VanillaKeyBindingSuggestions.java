@@ -30,24 +30,26 @@ public class VanillaKeyBindingSuggestions implements ISuggestionProvider {
 
     private static final Set<String> PREVENT_YOU_FROM_USING_THESE_BINDINGS = Set.of(DANGEROUS_BINDINGS);
 
-    protected KeyBinding[] getAllKeys(GameOptions options){
+    protected KeyBinding[] getAllKeys(GameOptions options) {
         return options.allKeys;
     }
+
     protected KeyBindSuggestion createKeyBindSuggestion(KeyBinding binding) {
         return new KeyBindSuggestion(binding);
     }
 
     public void addKeyBindingSuggestions(List<KeyBindSuggestion> bindings) {
-        bindings.addAll(Arrays.stream(getAllKeys(MinecraftClient.getInstance().options))
-              .filter(bind ->
-                      checkForUnboundOrHiddenBindings(bind)
-              && !PREVENT_YOU_FROM_USING_THESE_BINDINGS.contains(bind.getTranslationKey()))
-              .map(this::createKeyBindSuggestion)
-              .collect(Collectors.toList()));
+        bindings.addAll(Arrays
+                .stream(getAllKeys(MinecraftClient.getInstance().options))
+                .filter(bind ->
+                        checkForUnboundOrHiddenBindings(bind)
+                                && !PREVENT_YOU_FROM_USING_THESE_BINDINGS.contains(bind.getTranslationKey()))
+                .map(this::createKeyBindSuggestion)
+                .collect(Collectors.toList()));
     }
 
     private boolean checkForUnboundOrHiddenBindings(KeyBinding bind) {
-        return bind.isUnbound() || PolyproleneClient.configuration.hideCurrentlyBoundKeys;
+        return bind.isUnbound() || !PolyproleneClient.configuration.hideCurrentlyBoundKeys;
     }
 
 }

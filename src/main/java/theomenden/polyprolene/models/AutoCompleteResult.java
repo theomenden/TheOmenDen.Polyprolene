@@ -2,8 +2,6 @@ package theomenden.polyprolene.models;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import theomenden.polyprolene.interfaces.ISuggestionProvider;
 import theomenden.polyprolene.utils.ConfigurationUtils;
 import theomenden.polyprolene.utils.LoggerUtils;
@@ -26,19 +24,21 @@ public class AutoCompleteResult {
     private List<KeyBindSuggestion> currentSuggestions;
 
     public static List<ISuggestionProvider> suggestionProviders = Lists.newArrayList();
-    public static List<String> suggestionHistory = Collections.emptyList();
-    public static List<String> favorites = Collections.emptyList();
+    public static List<String> suggestionHistory = Lists.newArrayList();
+    public static List<String> favorites = Lists.newArrayList();
 
     public AutoCompleteResult() {
         allKeyBindSuggestions = Lists.newArrayList();
         currentSuggestions = Lists.newArrayList();
 
-        suggestionProviders.stream()
+        suggestionProviders
+                .stream()
                 .forEach(provider -> provider.addKeyBindingSuggestions(allKeyBindSuggestions));
 
         List<KeyBindSuggestion> tempFavorites = Lists.newLinkedList();
 
-        Lists.reverse(suggestionHistory)
+        Lists
+                .reverse(suggestionHistory)
                 .stream()
                 .forEach(s -> {
                     var iterator = allKeyBindSuggestions.iterator();
@@ -51,7 +51,9 @@ public class AutoCompleteResult {
 
     public void updateSuggestionsList(String searchTerm) {
         currentSuggestions.clear();
-        var terms = searchTerm.toLowerCase().split("[\\s,]+");
+        var terms = searchTerm
+                .toLowerCase()
+                .split("[\\s,]+");
 
         currentSuggestions = allKeyBindSuggestions
                 .stream()
@@ -66,7 +68,7 @@ public class AutoCompleteResult {
     public static void toggleFavorite(KeyBindSuggestion keyBindSuggestion) {
         keyBindSuggestion.isAFavorite ^= true;
 
-        if(keyBindSuggestion.isAFavorite) {
+        if (keyBindSuggestion.isAFavorite) {
             favorites.add(keyBindSuggestion.getId());
             suggestionHistory.add(keyBindSuggestion.getId());
             return;
@@ -79,6 +81,7 @@ public class AutoCompleteResult {
         suggestionHistory.remove(string);
         suggestionHistory.add(0, string);
     }
+
     public static void loadDataFromFile() {
         suggestionHistory.clear();
         favorites.clear();
@@ -91,7 +94,9 @@ public class AutoCompleteResult {
                 .supplyAsync(() -> readLinesFromFile(ConfigurationUtils.getFavoritesPath()))
                 .thenAccept(lines -> favorites.addAll(lines));
 
-        CompletableFuture.allOf(historyFuture, favoritesFuture).join();
+        CompletableFuture
+                .allOf(historyFuture, favoritesFuture)
+                .join();
     }
 
     public static void saveDataToFiles() {
@@ -100,49 +105,70 @@ public class AutoCompleteResult {
         CompletableFuture<Void> historyFuture = CompletableFuture
                 .runAsync(() -> writeToExistingFile(ConfigurationUtils.getHistoryPath()))
                 .exceptionally(e -> {
-                    LoggerUtils.getLoggerInstance().info(e.getMessage());
-                             return null;
-                         })
-                .thenRun(() -> LoggerUtils.getLoggerInstance().info(" History written successfully."));
+                    LoggerUtils
+                            .getLoggerInstance()
+                            .info(e.getMessage());
+                    return null;
+                })
+                .thenRun(() -> LoggerUtils
+                        .getLoggerInstance()
+                        .info(" History written successfully."));
 
-        CompletableFuture<Void> favoritesFuture =CompletableFuture.runAsync(() -> writeToExistingFile(ConfigurationUtils.getFavoritesPath()))
-                         .exceptionally(e -> {
-                             LoggerUtils.getLoggerInstance().info(e.getMessage());
-                             return null;
-                         })
-                         .thenRun(() -> LoggerUtils.getLoggerInstance().info("Current Favorites written successfully."));
+        CompletableFuture<Void> favoritesFuture = CompletableFuture
+                .runAsync(() -> writeToExistingFile(ConfigurationUtils.getFavoritesPath()))
+                .exceptionally(e -> {
+                    LoggerUtils
+                            .getLoggerInstance()
+                            .info(e.getMessage());
+                    return null;
+                })
+                .thenRun(() -> LoggerUtils
+                        .getLoggerInstance()
+                        .info("Current Favorites written successfully."));
 
-        CompletableFuture.allOf(historyFuture, favoritesFuture).join();
+        CompletableFuture
+                .allOf(historyFuture, favoritesFuture)
+                .join();
     }
 
     private static void writeToExistingFile(Path file) {
+        ConfigurationUtils.isFileReady(file);
+
         try (PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(
                 new FileOutputStream(file.toFile(), true), StandardCharsets.UTF_8))) {
             suggestionHistory.forEach(printWriter::println);
         } catch (IOException e) {
-            LoggerUtils.getLoggerInstance().info(e.getMessage());
+            LoggerUtils
+                    .getLoggerInstance()
+                    .info(e.getMessage());
         }
     }
+
     private static List<String> readLinesFromFile(Path fileName) {
-        List<String> lines =  Collections.emptyList();
+        List<String> lines = Collections.emptyList();
         try {
-            lines = Files.readLines(fileName.toFile(), Charset.defaultCharset());
-        } catch (IOException e) {
-            LoggerUtils.getLoggerInstance()
-                       .info("Exception occurred while trying to read a Polyprolene '"+ fileName +"' file: " + e.getMessage());
+            if (ConfigurationUtils.isFileReady(fileName)) {
+                lines = Files.readLines(fileName.toFile(), Charset.defaultCharset());
             }
+        } catch (IOException e) {
+            LoggerUtils
+                    .getLoggerInstance()
+                    .info("Exception occurred while trying to read a Polyprolene '" + fileName + "' file: " + e.getMessage());
+        }
 
         return lines;
     }
 
     private void generateTemporaryFavoritesFromIterator(String s, Iterator<KeyBindSuggestion> iterator, List<KeyBindSuggestion> tempFavorites) {
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             var bindingSuggestion = iterator.next();
 
-            if(bindingSuggestion.getId().equals(s)) {
+            if (bindingSuggestion
+                    .getId()
+                    .equals(s)) {
                 iterator.remove();
 
-                if(favorites.contains(s)) {
+                if (favorites.contains(s)) {
                     bindingSuggestion.isAFavorite = true;
                     tempFavorites.add(bindingSuggestion);
                 } else {

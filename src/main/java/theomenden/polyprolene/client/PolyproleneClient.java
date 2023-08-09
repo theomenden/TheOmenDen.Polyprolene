@@ -20,15 +20,20 @@ public class PolyproleneClient implements ClientModInitializer {
     public static PolyproleneConfig configuration;
     public static KeyBinding launchingKey;
     public static KeyBinding favoriteKey;
+
     public static final String MODID = "polyprolene";
 
     @Override
     public void onInitializeClient() {
         AutoConfig.register(PolyproleneConfig.class, GsonConfigSerializer::new);
-        configuration = AutoConfig.getConfigHolder(PolyproleneConfig.class).getConfig();
-        LoggerUtils.getLoggerInstance().info("Polyprolene is coming for your keybinds >:D");
+        configuration = AutoConfig
+                .getConfigHolder(PolyproleneConfig.class)
+                .getConfig();
+        LoggerUtils
+                .getLoggerInstance()
+                .info("Polyprolene is coming for your keybinds >:D");
 
-        if(!ConfigurationUtils.isDirectoryReadyToBeWritten()) {
+        if (!ConfigurationUtils.isDirectoryReadyToBeWritten()) {
             ConfigurationUtils.createFile(ConfigurationUtils.getHistoryPath());
             ConfigurationUtils.createFile(ConfigurationUtils.getFavoritesPath());
         }
@@ -48,7 +53,7 @@ public class PolyproleneClient implements ClientModInitializer {
         ));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if(launchingKey.wasPressed()) {
+            if (launchingKey.wasPressed()) {
                 openNewPolyproleneScreen(client);
             }
         });
@@ -62,6 +67,7 @@ public class PolyproleneClient implements ClientModInitializer {
     public VanillaKeyBindingSuggestions createVanillaKeyBindingSuggestions() {
         return new VanillaKeyBindingSuggestions();
     }
+
     public void openNewPolyproleneScreen(MinecraftClient client) {
         client.setScreen(new PolyproleneScreen());
     }
