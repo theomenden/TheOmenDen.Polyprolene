@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 import theomenden.polyprolene.models.AutoCompleteResult;
 import theomenden.polyprolene.models.VanillaKeyBindingSuggestions;
@@ -22,7 +23,7 @@ public class PolyproleneClient implements ClientModInitializer {
     public static KeyBinding favoriteKey;
 
     public static final String MODID = "polyprolene";
-
+    public static final Identifier SCREEN_WIDGETS = new Identifier(MODID, "");
     @Override
     public void onInitializeClient() {
         AutoConfig.register(PolyproleneConfig.class, GsonConfigSerializer::new);
