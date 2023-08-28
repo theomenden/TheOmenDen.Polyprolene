@@ -11,28 +11,28 @@ import net.minecraft.client.gui.widget.PressableWidget;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.text.OrderedText;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableTextContent;
 import org.apache.commons.compress.utils.Lists;
 import theomenden.polyprolene.client.PolyproleneKeyboardScreen;
-import theomenden.polyprolene.mixin.KeyBindAccessorMixin;
+import theomenden.polyprolene.mixin.keys.KeyBindAccessor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class KeyComponent extends PressableWidget implements TickableWidget {
+public final class KeyComponent extends PressableWidget implements TickableWidget {
     private final InputUtil.Key key;
-    public float xCoord;
-    public float yCoord;
-    public PolyproleneKeyboardScreen polyproleneKeyboardScreen;
-    protected float width;
-    protected float height;
+    private final PolyproleneKeyboardScreen polyproleneKeyboardScreen;
+    private final float xCoord;
+    private final float yCoord;
+    private final float width;
+    private final float height;
     private List<Text> tooltipText = Lists.newArrayList();
 
-    public KeyComponent(int keyCode, float x, float y, float width, float height, InputUtil.Type keyType) {
+    public KeyComponent(PolyproleneKeyboardScreen screen, int keyCode, float x, float y, float width, float height, InputUtil.Type keyType) {
         super((int) x, (int) y, (int) width, (int) height, Text.of(""));
         this.xCoord = x;
         this.yCoord = y;
@@ -40,6 +40,7 @@ public class KeyComponent extends PressableWidget implements TickableWidget {
         this.height = height;
         this.key = keyType.createFromCode(keyCode);
         this.setMessage(this.key.getLocalizedText());
+        this.polyproleneKeyboardScreen = screen;
     }
 
     @Override
@@ -85,7 +86,9 @@ public class KeyComponent extends PressableWidget implements TickableWidget {
                 color);
 
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-        context.drawTextWithShadow(textRenderer, (OrderedText) this.getMessage(),
+        context.drawTextWithShadow(
+                textRenderer,
+                this.getMessage(),
                 (int) (this.xCoord + (this.width / 2) - textRenderer.getWidth(this.getMessage()) / 2),
                 (int) (this.yCoord + (this.height - 6) / 2),
                 color);
@@ -94,7 +97,7 @@ public class KeyComponent extends PressableWidget implements TickableWidget {
     private int getColor() {
         int bindingCount = this.tooltipText.size();
 
-        int color = 0;
+        int color;
 
         if (this.active) {
 
@@ -129,17 +132,18 @@ public class KeyComponent extends PressableWidget implements TickableWidget {
     }
 
     private void updateTooltip() {
-        Arrays
+        ArrayList<String> tooltipText = Arrays
                 .stream(MinecraftClient.getInstance().options.allKeys)
-                .filter(kb -> ((KeyBindAccessorMixin) kb)
+                .filter(b -> ((KeyBindAccessor) b)
                         .getBoundKey()
                         .equals(this.key))
-                .forEach(kb -> tooltipText.add(Text.translatable(kb.getTranslationKey())));
+                .map(b -> I18n.translate(b.getTranslationKey()))
+                .collect(Collectors.toCollection(ArrayList::new));
 
         this.tooltipText = tooltipText
                 .stream()
                 .sorted()
-                .map(s -> Text.translatable(s.getString()))
+                .map(s -> MutableText.of(new TranslatableTextContent(s, this.key.getTranslationKey(), null)))
                 .collect(Collectors.toCollection(ArrayList<Text>::new));
     }
 }

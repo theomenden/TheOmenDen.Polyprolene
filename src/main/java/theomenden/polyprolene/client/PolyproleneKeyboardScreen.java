@@ -3,7 +3,6 @@ package theomenden.polyprolene.client;
 import me.shedaniel.clothconfig2.api.TickableWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.ControlsOptionsScreen;
 import net.minecraft.client.gui.screen.option.GameOptionsScreen;
@@ -16,7 +15,15 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
+import theomenden.polyprolene.components.CategoryComponent;
+import theomenden.polyprolene.components.KeyBindingListComponent;
 import theomenden.polyprolene.components.KeyboardComponent;
+import theomenden.polyprolene.components.KeyboardComponentBuilder;
+import theomenden.polyprolene.enums.MouseButtons;
+import theomenden.polyprolene.models.records.ButtonDimensions;
+import theomenden.polyprolene.models.records.ButtonWidgetBase;
+import theomenden.polyprolene.models.records.ButtonWidgetConstruct;
+import theomenden.polyprolene.utils.ButtonWidgetUtils;
 import theomenden.polyprolene.utils.KeyInfoUtils;
 
 import java.util.Arrays;
@@ -25,7 +32,8 @@ public class PolyproleneKeyboardScreen extends GameOptionsScreen {
     private int mouseCodeIndex = 0;
     private KeyboardComponent keyboard;
     private KeyboardComponent mouseButtons;
-    private Key
+    private KeyBindingListComponent bindingList;
+    private CategoryComponent categorySelector;
     private TexturedButtonWidget screenToggler;
     private TextFieldWidget searchBar;
     private ButtonWidget mousePlus;
@@ -67,50 +75,83 @@ public class PolyproleneKeyboardScreen extends GameOptionsScreen {
 
 
         int bindingListWidth = (maxBindingNameWidth[0] + 20);
-        this.bindingList = new KeyBindingListWidget(this, 10, 10, bindingListWidth, this.height - 40, this.textRenderer.fontHeight * 3 + 10);
-        this.keyboard = KeyboardWidgetBuilder.standardKeyboard(this, bindingListWidth + 15, this.height / 2 - 90, this.width - (bindingListWidth + 15), 180);
-        this.categorySelector = new CategorySelectorWidget(this, bindingListWidth + 15, 5, maxCategoryWidth[0] + 20, 20);
-        this.screenToggleButton = new TexturedButtonWidget(this.width - 22, this.height - 22, 20, 20, 20, 0, 20, KeyWizard.SCREEN_TOGGLE_WIDGETS, 40, 40, (btn) -> {
-            this.client.openScreen(new ControlsOptionsScreen(this.parent, this.gameOptions));
+        this.bindingList = new KeyBindingListComponent(this, 10, 10, bindingListWidth, this.height - 40, this.textRenderer.fontHeight * 3 + 10);
+        this.keyboard = KeyboardComponentBuilder.buildStandardKeyBoard(this, bindingListWidth + 15, this.height / 2 - 90, this.width - (bindingListWidth + 15), 180);
+        this.categorySelector = new CategoryComponent(this, bindingListWidth + 15, 5, maxCategoryWidth[0] + 20, 20);
+        this.screenToggler = new TexturedButtonWidget(this.width - 22, this.height - 22, 20, 20, 20, 0, 20, PolyproleneClient.SCREEN_WIDGETS, 40, 40, (btn) -> {
+            this.client.setScreen(new ControlsOptionsScreen(this.parent, this.gameOptions));
         });
         this.searchBar = new TextFieldWidget(this.textRenderer, 10, this.height - 20, bindingListWidth, 14, Text.of(""));
-        this.mouseButton = KeyboardWidgetBuilder.singleKeyKeyboard(this, mouseButtonX, mouseButtonY, mouseButtonWidth, mouseButtonHeight, mouseCodes[mouseCodeIndex], InputUtil.Type.MOUSE);
-        this.mousePlus = new ButtonWidget((int) this.mouseButton.getAnchorX() + 83, (int) this.mouseButton.getAnchorY(), 25, 20, Text.of("+"), (btn) -> {
-            this.mouseCodeIndex++;
-            if (this.mouseCodeIndex >= this.mouseCodes.length) {
-                this.mouseCodeIndex = 0;
-            }
-            this.children.remove(this.mouseButton);
-            this.mouseButton = KeyboardWidgetBuilder.singleKeyKeyboard(this, mouseButtonX, mouseButtonY, mouseButtonWidth, mouseButtonHeight, mouseCodes[mouseCodeIndex], InputUtil.Type.MOUSE);
-            this.children.add(this.mouseButton);
-        });
-        this.mouseMinus = new ButtonWidget((int) this.mouseButton.getAnchorX() - 26, (int) this.mouseButton.getAnchorY(), 25, 20, Text.of("-"), (btn) -> {
-            this.mouseCodeIndex--;
-            if (this.mouseCodeIndex < 0) {
-                this.mouseCodeIndex = this.mouseCodes.length - 1;
-            }
-            this.children.remove(this.mouseButton);
-            this.mouseButton = KeyboardWidgetBuilder.singleKeyKeyboard(this, mouseButtonX, mouseButtonY, mouseButtonWidth, mouseButtonHeight, mouseCodes[mouseCodeIndex], InputUtil.Type.MOUSE);
-            this.children.add(this.mouseButton);
-        });
-        this.resetBinding = new ButtonWidget(bindingListWidth + 15, this.height - 23, 50, 20, new TranslatableText("controls.reset"), (btn) -> {
-            KeyBinding selectedBinding = this.getSelectedKeyBinding();
-            selectedBinding.setBoundKey(selectedBinding.getDefaultKey());
-            KeyBinding.updateKeysByCode();
-        });
-        this.clearBinding = new ButtonWidget(bindingListWidth + 66, this.height - 23, 50, 20, new TranslatableText("gui.clear"), (btn) -> {
-            KeyBinding selectedBinding = this.getSelectedKeyBinding();
-            selectedBinding.setBoundKey(InputUtil.Type.KEYSYM.createFromCode(GLFW.GLFW_KEY_UNKNOWN));
-            KeyBinding.updateKeysByCode();
-        });
-        this.resetAll = new ButtonWidget(bindingListWidth + 117, this.height - 23, 70, 20, new TranslatableText("controls.resetAll"), (btn) -> {
-            for (KeyBinding b : this.gameOptions.keysAll) {
-                b.setBoundKey(b.getDefaultKey());
-            }
-            KeyBinding.updateKeysByCode();
-        });
 
-        this.addDrawableChild(this.);
+        this.mouseButtons = KeyboardComponentBuilder.buildSingleKeyKeyboard(this, mouseButtonX, mouseButtonY, mouseButtonWidth, mouseButtonHeight, MouseButtons.MOUSE_BUTTONS[mouseCodeIndex], InputUtil.Type.MOUSE);
+
+        this.mousePlus = ButtonWidgetUtils.buildSymbolButton(
+                new ButtonWidgetConstruct(
+                        new ButtonWidgetBase("+", btn -> {
+                            this.mouseCodeIndex++;
+                            if (this.mouseCodeIndex >= MouseButtons.MOUSE_BUTTONS.length) {
+                                this.mouseCodeIndex = 0;
+                            }
+                            this
+                                    .children()
+                                    .remove(this.mouseButtons);
+                            this.mouseButtons = KeyboardComponentBuilder.buildSingleKeyKeyboard(this, mouseButtonX, mouseButtonY, mouseButtonWidth, mouseButtonHeight, MouseButtons.MOUSE_BUTTONS[mouseCodeIndex].ordinal(), InputUtil.Type.MOUSE);
+                            this.addDrawableChild(this.mouseButtons);
+                        }),
+                        new ButtonDimensions((int) this.mouseButtons.getAnchorX() + 83, (int) this.mouseButtons.getAnchorY(), 25, 20)));
+
+        this.mouseMinus = ButtonWidgetUtils.buildSymbolButton(
+                new ButtonWidgetConstruct(
+                        new ButtonWidgetBase("-", btn -> {
+                            this.mouseCodeIndex--;
+                            if (this.mouseCodeIndex < 0) {
+                                this.mouseCodeIndex = MouseButtons.MOUSE_BUTTONS.length - 1;
+                            }
+                            this
+                                    .children()
+                                    .remove(this.mouseButtons);
+                            this.mouseButtons = KeyboardComponentBuilder.buildSingleKeyKeyboard(this, mouseButtonX, mouseButtonY, mouseButtonWidth, mouseButtonHeight, MouseButtons.MOUSE_BUTTONS[mouseCodeIndex].ordinal(), InputUtil.Type.MOUSE);
+                            this.addDrawableChild(this.mouseButtons);
+                        }),
+                        new ButtonDimensions((int) this.mouseButtons.getAnchorX() - 26, (int) this.mouseButtons.getAnchorY(), 25, 20)
+                )
+        );
+
+        this.resetButton = ButtonWidgetUtils.buildButton(
+                new ButtonWidgetConstruct(
+                        new ButtonWidgetBase("controls.reset", btn -> {
+                            KeyBinding selectedBinding = this.getSelectedKeyBind();
+                            selectedBinding.setBoundKey(selectedBinding.getDefaultKey());
+                            KeyBinding.updateKeysByCode();
+                        }),
+                        new ButtonDimensions(bindingListWidth + 15, this.height - 23, 50, 20)
+                )
+        );
+
+        this.clearBindingsButton = ButtonWidgetUtils.buildButton(
+                new ButtonWidgetConstruct(
+                        new ButtonWidgetBase("gui.clear", btn -> {
+                            KeyBinding selectedBinding = this.getSelectedKeyBind();
+                            selectedBinding.setBoundKey(InputUtil.Type.KEYSYM.createFromCode(GLFW.GLFW_KEY_UNKNOWN));
+                            KeyBinding.updateKeysByCode();
+                        }),
+                        new ButtonDimensions(bindingListWidth + 66, this.height - 23, 50, 20)
+                )
+        );
+
+        this.resetAllButton = ButtonWidgetUtils.buildButton(
+                new ButtonWidgetConstruct(
+                        new ButtonWidgetBase("controls.resetAll", btn -> {
+                            Arrays
+                                    .stream(this.gameOptions.allKeys)
+                                    .forEach(b -> b.setBoundKey(b.getDefaultKey()));
+                            KeyBinding.updateKeysByCode();
+                        }),
+                        new ButtonDimensions(bindingListWidth + 117, this.height - 23, 70, 20)
+                )
+        );
+
+        this.addDrawableChild(this.bindingList);
         this.addDrawableChild(this.keyboard);
         this.addDrawableChild(this.categorySelector);
         this.addDrawableChild(this.categorySelector.getCategoryList());
@@ -136,11 +177,7 @@ public class PolyproleneKeyboardScreen extends GameOptionsScreen {
     @Override
     public void render(DrawContext context, OptionListWidget optionButtons, int mouseX, int mouseY, float tickDelta) {
         this.renderBackground(context);
-        this
-                .children()
-                .stream()
-                .filter(b -> b instanceof Drawable)
-                .forEach(b -> ((Drawable) b).render(context, mouseX, mouseY, tickDelta));
+        super.render(context, mouseX, mouseY, tickDelta);
     }
 
     @Nullable
@@ -149,7 +186,7 @@ public class PolyproleneKeyboardScreen extends GameOptionsScreen {
     }
 
     public boolean getExtendedCategorySelector() {
-        return this.categorySelector.extended;
+        return this.categorySelector.isExtended;
     }
 
     public String getSelectedCategory() {

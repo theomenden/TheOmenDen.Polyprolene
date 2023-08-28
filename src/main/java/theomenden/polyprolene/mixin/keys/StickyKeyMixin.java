@@ -1,4 +1,4 @@
-package theomenden.polyprolene.mixin;
+package theomenden.polyprolene.mixin.keys;
 
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.option.StickyKeyBinding;
@@ -14,11 +14,11 @@ public abstract class StickyKeyMixin extends KeyBinding {
     }
 
     @Redirect(method = "setPressed",
-    at = @At(value="INVOKE",
-    target = "Lnet/minecraft/client/option/KeyBinding;setPressed(Z)V",
-    ordinal = 0))
+            at = @At(value = "INVOKE",
+                    target = "Lnet/minecraft/client/option/KeyBinding;setPressed(Z)V",
+                    ordinal = 0))
     private void proxySetPressed(KeyBinding instance, boolean pressed) {
-        if(!((IKeyBindingHandler)this).isActiveModifierWithContext()) {
+        if (!((IKeyBindingHandler) this).isActiveModifierWithContext()) {
             return;
         }
         super.setPressed(!isPressed());

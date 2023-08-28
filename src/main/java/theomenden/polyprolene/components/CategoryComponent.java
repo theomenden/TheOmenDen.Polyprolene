@@ -3,14 +3,15 @@ package theomenden.polyprolene.components;
 import me.shedaniel.clothconfig2.api.TickableWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.Element;
+import net.minecraft.client.gui.screen.narration.Narration;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
+import net.minecraft.client.gui.screen.narration.NarrationPart;
 import net.minecraft.client.gui.widget.PressableWidget;
 import net.minecraft.text.Text;
 import theomenden.polyprolene.client.PolyproleneKeyboardScreen;
 import theomenden.polyprolene.utils.KeyInfoUtils;
 
-public class CategoryComponent extends PressableWidget implements TickableWidget {
+public final class CategoryComponent extends PressableWidget implements TickableWidget {
     public PolyproleneKeyboardScreen polyproleneKeyboardScreen;
     public boolean isExtended = false;
 
@@ -34,7 +35,6 @@ public class CategoryComponent extends PressableWidget implements TickableWidget
         this.categoryList = new BindingCategoryListComponent(client, this.getY() + this.height, this.getX(), this.width, listHeight, listItemHeight);
     }
 
-
     @Override
     public void tick() {
         this.setMessage(Text.translatable(this.getSelectedCategory()));
@@ -57,6 +57,19 @@ public class CategoryComponent extends PressableWidget implements TickableWidget
     }
 
     @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        boolean isListClicked = this.categoryList.mouseClicked(mouseX, mouseY, button);
+        boolean hasThisBeenClicked = super.mouseClicked(mouseX, mouseY, button);
+
+        final boolean wasListOrThisClicked = isListClicked || hasThisBeenClicked;
+
+        if (!(wasListOrThisClicked)) {
+            this.isExtended = false;
+        }
+        return wasListOrThisClicked;
+    }
+
+    @Override
     protected void appendClickableNarrations(NarrationMessageBuilder builder) {
 
     }
@@ -68,11 +81,11 @@ public class CategoryComponent extends PressableWidget implements TickableWidget
         return ((BindingCategoryListComponent.CategoryEntry) this.categoryList.getSelectedOrNull()).category;
     }
 
-    public Element getCategoryList() {
+    public BindingCategoryListComponent getCategoryList() {
         return this.categoryList;
     }
 
-    private static class BindingCategoryListComponent extends FreeFormListComponent<BindingCategoryListComponent.CategoryEntry> {
+    public static final class BindingCategoryListComponent extends FreeFormListComponent<BindingCategoryListComponent.CategoryEntry> {
 
         public BindingCategoryListComponent(MinecraftClient client, int top, int left, int width, int height, int itemHeight) {
             super(client, width, height, top, left, itemHeight);
@@ -89,10 +102,10 @@ public class CategoryComponent extends PressableWidget implements TickableWidget
 
         @Override
         public void appendNarrations(NarrationMessageBuilder builder) {
-
+            builder.put(NarrationPart.TITLE, Narration.text(Text.translatable("key.polyprolene.categories.all")));
         }
 
-        public class CategoryEntry extends FreeFormListComponent<BindingCategoryListComponent.CategoryEntry>.Entry {
+        public final class CategoryEntry extends FreeFormListComponent<BindingCategoryListComponent.CategoryEntry>.Entry {
 
             private final String category;
 

@@ -1,4 +1,4 @@
-package theomenden.polyprolene.mixin;
+package theomenden.polyprolene.mixin.keys;
 
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import theomenden.polyprolene.enums.ModifierKeys;
+import theomenden.polyprolene.enums.ModifierKey;
 import theomenden.polyprolene.interfaces.IKeyBindingHandler;
 
 import java.util.Arrays;
@@ -67,14 +67,14 @@ public abstract class KeyBindsScreenMixin extends GameOptionsScreen {
         final IKeyBindingHandler extendedBinding = (IKeyBindingHandler) selectedKeyBinding;
 
         if (keyCode == 256) {
-            extendedBinding.setModifierWithCodeForKey(ModifierKeys.getActiveModifier(), InputUtil.UNKNOWN_KEY);
+            extendedBinding.setModifierWithCodeForKey(ModifierKey.getActiveModifier(), InputUtil.UNKNOWN_KEY);
             this.gameOptions.setKeyCode(selectedKeyBinding, InputUtil.UNKNOWN_KEY);
         } else {
-            extendedBinding.setModifierWithCodeForKey(ModifierKeys.getActiveModifier(), InputUtil.fromKeyCode(keyCode, scanCode));
+            extendedBinding.setModifierWithCodeForKey(ModifierKey.getActiveModifier(), InputUtil.fromKeyCode(keyCode, scanCode));
             this.gameOptions.setKeyCode(selectedKeyBinding, InputUtil.fromKeyCode(keyCode, scanCode));
         }
 
-        if (ModifierKeys.isModifierForKeyCode(((IKeyBindingHandler) selectedKeyBinding).getKey())) {
+        if (ModifierKey.isModifierForKeyCode(((IKeyBindingHandler) selectedKeyBinding).getKey())) {
             selectedKeyBinding = null;
         }
 

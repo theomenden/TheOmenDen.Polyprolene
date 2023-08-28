@@ -2,23 +2,30 @@ package theomenden.polyprolene.components;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import lombok.Getter;
 import me.shedaniel.clothconfig2.api.TickableWidget;
 import net.minecraft.client.gui.AbstractParentElement;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Drawable;
+import net.minecraft.client.gui.Selectable;
+import net.minecraft.client.gui.screen.narration.Narration;
+import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
+import net.minecraft.client.gui.screen.narration.NarrationPart;
 import net.minecraft.client.util.InputUtil;
 import theomenden.polyprolene.client.PolyproleneKeyboardScreen;
 
 import java.util.List;
 import java.util.Map;
 
-public class KeyboardComponent extends AbstractParentElement implements Drawable, TickableWidget {
+public final class KeyboardComponent extends AbstractParentElement implements Drawable, TickableWidget, Selectable {
     private final Map<Integer, KeyComponent> keyboardComponentMap = Maps.newHashMap();
+    @Getter
     private final float anchorX;
+    @Getter
     private final float anchorY;
     public PolyproleneKeyboardScreen polyproleneKeyboardScreen;
 
-    protected KeyboardComponent(PolyproleneKeyboardScreen keyboardScreen, float anchorX, float anchorY) {
+    KeyboardComponent(PolyproleneKeyboardScreen keyboardScreen, float anchorX, float anchorY) {
         this.polyproleneKeyboardScreen = keyboardScreen;
         this.anchorX = anchorX;
         this.anchorY = anchorY;
@@ -35,15 +42,18 @@ public class KeyboardComponent extends AbstractParentElement implements Drawable
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         List<? extends KeyComponent> keys = this.children();
 
-        keys
-                .forEach(k -> k.render(context, mouseX, mouseY, delta));
+        keys.forEach(key -> key.render(context, mouseX, mouseY, delta));
 
         if (!polyproleneKeyboardScreen.getExtendedCategorySelector()) {
             keys
                     .stream()
                     .filter(k -> k.active && k.isHovered())
-                    .forEach(k -> polyproleneKeyboardScreen
-                            .renderWithTooltip(context, mouseX, mouseY, delta));
+                    .forEach(k ->
+                            polyproleneKeyboardScreen
+                                    .renderWithTooltip(context,
+                                            mouseX,
+                                            mouseY,
+                                            delta));
         }
 
     }
@@ -72,21 +82,23 @@ public class KeyboardComponent extends AbstractParentElement implements Drawable
 
     public float addKeyToMap(float relativeX, float relativeY, float width, float height, float keySpacing, int keyCode) {
         this.keyboardComponentMap
-                .put(keyCode, new KeyComponent(keyCode, this.anchorX + relativeX, this.anchorY + relativeY, width, height, InputUtil.Type.KEYSYM));
+                .put(keyCode, new KeyComponent(polyproleneKeyboardScreen, keyCode, this.anchorX + relativeX, this.anchorY + relativeY, width, height, InputUtil.Type.KEYSYM));
 
         return relativeX + width + keySpacing;
     }
 
     public float addKeyToMap(float relativeX, float relativeY, float width, float height, float keySpacing, int keyCode, InputUtil.Type keyType) {
-        this.keyboardComponentMap.put(keyCode, new KeyComponent(keyCode, this.anchorX + relativeX, this.anchorY + relativeY, width, height, keyType));
+        this.keyboardComponentMap.put(keyCode, new KeyComponent(polyproleneKeyboardScreen, keyCode, this.anchorX + relativeX, this.anchorY + relativeY, width, height, keyType));
         return relativeX + width + keySpacing;
     }
 
-    public float getAnchorX() {
-        return this.anchorX;
+    @Override
+    public void appendNarrations(NarrationMessageBuilder builder) {
+        builder.put(NarrationPart.TITLE, Narration.EMPTY);
     }
 
-    public float getAnchorY() {
-        return this.anchorY;
+    @Override
+    public SelectionType getType() {
+        return SelectionType.NONE;
     }
 }

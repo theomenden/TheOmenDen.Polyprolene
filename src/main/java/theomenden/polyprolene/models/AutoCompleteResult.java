@@ -2,6 +2,7 @@ package theomenden.polyprolene.models;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
+import lombok.Getter;
 import theomenden.polyprolene.interfaces.ISuggestionProvider;
 import theomenden.polyprolene.utils.ConfigurationUtils;
 import theomenden.polyprolene.utils.LoggerUtils;
@@ -20,26 +21,24 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class AutoCompleteResult {
-    private List<KeyBindSuggestion> allKeyBindSuggestions;
-    private List<KeyBindSuggestion> currentSuggestions;
-
     public static List<ISuggestionProvider> suggestionProviders = Lists.newArrayList();
     public static List<String> suggestionHistory = Lists.newArrayList();
     public static List<String> favorites = Lists.newArrayList();
+    private final List<KeyBindSuggestion> allKeyBindSuggestions;
+    @Getter
+    private List<KeyBindSuggestion> currentSuggestions;
 
     public AutoCompleteResult() {
         allKeyBindSuggestions = Lists.newArrayList();
         currentSuggestions = Lists.newArrayList();
 
         suggestionProviders
-                .stream()
                 .forEach(provider -> provider.addKeyBindingSuggestions(allKeyBindSuggestions));
 
         List<KeyBindSuggestion> tempFavorites = Lists.newLinkedList();
 
         Lists
                 .reverse(suggestionHistory)
-                .stream()
                 .forEach(s -> {
                     var iterator = allKeyBindSuggestions.iterator();
 
@@ -47,22 +46,6 @@ public class AutoCompleteResult {
                 });
 
         allKeyBindSuggestions.addAll(0, tempFavorites);
-    }
-
-    public void updateSuggestionsList(String searchTerm) {
-        currentSuggestions.clear();
-        var terms = searchTerm
-                .toLowerCase()
-                .split("[\\s,]+");
-
-        currentSuggestions = allKeyBindSuggestions
-                .stream()
-                .filter(suggestion -> suggestion.matches(terms))
-                .collect(Collectors.toList());
-    }
-
-    public List<KeyBindSuggestion> getCurrentSuggestions() {
-        return currentSuggestions;
     }
 
     public static void toggleFavorite(KeyBindSuggestion keyBindSuggestion) {
@@ -157,6 +140,18 @@ public class AutoCompleteResult {
         }
 
         return lines;
+    }
+
+    public void updateSuggestionsList(String searchTerm) {
+        currentSuggestions.clear();
+        var terms = searchTerm
+                .toLowerCase()
+                .split("[\\s,]+");
+
+        currentSuggestions = allKeyBindSuggestions
+                .stream()
+                .filter(suggestion -> suggestion.matches(terms))
+                .collect(Collectors.toList());
     }
 
     private void generateTemporaryFavoritesFromIterator(String s, Iterator<KeyBindSuggestion> iterator, List<KeyBindSuggestion> tempFavorites) {

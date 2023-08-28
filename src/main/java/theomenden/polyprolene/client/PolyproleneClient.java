@@ -11,33 +11,30 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import theomenden.polyprolene.models.AutoCompleteResult;
-import theomenden.polyprolene.models.VanillaKeyBindingSuggestions;
-import theomenden.polyprolene.utils.ConfigurationUtils;
-import theomenden.polyprolene.utils.LoggerUtils;
+import theomenden.polyprolene.models.keyinfo.ModifierKeys;
+import theomenden.polyprolene.providers.VanillaKeyBindingSuggestionProvider;
 
-public class PolyproleneClient implements ClientModInitializer {
-
-    public static PolyproleneConfig configuration;
-    public static KeyBinding launchingKey;
-    public static KeyBinding favoriteKey;
+public final class PolyproleneClient implements ClientModInitializer {
 
     public static final String MODID = "polyprolene";
     public static final Identifier SCREEN_WIDGETS = new Identifier(MODID, "");
+    public static final ModifierKeys CURRENT_MODIFIERS = new ModifierKeys();
+    private static final Logger LOGGER = LoggerFactory.getLogger(MODID);
+    public static PolyproleneConfig configuration;
+    public static KeyBinding launchingKey;
+    public static KeyBinding favoriteKey;
+    public static KeyBinding wizardkey;
+
     @Override
     public void onInitializeClient() {
         AutoConfig.register(PolyproleneConfig.class, GsonConfigSerializer::new);
         configuration = AutoConfig
                 .getConfigHolder(PolyproleneConfig.class)
                 .getConfig();
-        LoggerUtils
-                .getLoggerInstance()
-                .info("Polyprolene is coming for your keybinds >:D");
-
-        if (!ConfigurationUtils.isDirectoryReadyToBeWritten()) {
-            ConfigurationUtils.createFile(ConfigurationUtils.getHistoryPath());
-            ConfigurationUtils.createFile(ConfigurationUtils.getFavoritesPath());
-        }
+        LOGGER.info("Polyprolene is coming for your keybinds >:D");
 
         launchingKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.polyprolene.launcher",
@@ -53,9 +50,20 @@ public class PolyproleneClient implements ClientModInitializer {
                 "category.polyprolene"
         ));
 
+        wizardkey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "key.polyprolene.wizard",
+                InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_F7,
+                "category.polyprolene"
+        ));
+
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (launchingKey.wasPressed()) {
                 openNewPolyproleneScreen(client);
+            }
+
+            if (wizardkey.wasPressed()) {
+                openNewPolyproleneWizardScreen(client);
             }
         });
 
@@ -65,8 +73,12 @@ public class PolyproleneClient implements ClientModInitializer {
         AutoCompleteResult.suggestionProviders.add(createVanillaKeyBindingSuggestions());
     }
 
-    public VanillaKeyBindingSuggestions createVanillaKeyBindingSuggestions() {
-        return new VanillaKeyBindingSuggestions();
+    public VanillaKeyBindingSuggestionProvider createVanillaKeyBindingSuggestions() {
+        return new VanillaKeyBindingSuggestionProvider();
+    }
+
+    public void openNewPolyproleneWizardScreen(MinecraftClient client) {
+        client.setScreen(new PolyproleneKeyboardScreen(client.currentScreen));
     }
 
     public void openNewPolyproleneScreen(MinecraftClient client) {

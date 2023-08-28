@@ -11,13 +11,18 @@ import java.util.Arrays;
 import java.util.function.Supplier;
 
 public enum MouseButtons implements StringIdentifiable {
-    MOUSE_1{
+    MOUSE_1 {
         @Override
         public boolean isMatchedBy(InputUtil.Key key) {
             return key.getCode() == GLFW.GLFW_MOUSE_BUTTON_1;
         }
 
         @Override
+        public int getGLFWValue() {
+            return GLFW.GLFW_MOUSE_BUTTON_1;
+        }
+
+        @Override
         public boolean isActivated(@org.jetbrains.annotations.Nullable IKeyConflictDeterminator conflictDeterminator) {
             return conflictDeterminator != null
                     && !conflictDeterminator.isAConflictWith(KeyBindingConflicts.IN_GAME)
@@ -28,20 +33,25 @@ public enum MouseButtons implements StringIdentifiable {
 
         @Override
         public Text getLocalizedName(InputUtil.Key key, Supplier<Text> defaultedValue) {
-            return  Text.literal(key
+            return Text.literal(key
                     .getLocalizedText()
                     .getString() + defaultedValue
                     .get()
                     .getString());
         }
     },
-    MOUSE_2{
+    MOUSE_2 {
         @Override
         public boolean isMatchedBy(InputUtil.Key key) {
             return key.getCode() == GLFW.GLFW_MOUSE_BUTTON_2;
         }
 
         @Override
+        public int getGLFWValue() {
+            return GLFW.GLFW_MOUSE_BUTTON_2;
+        }
+
+        @Override
         public boolean isActivated(@org.jetbrains.annotations.Nullable IKeyConflictDeterminator conflictDeterminator) {
             return conflictDeterminator != null
                     && !conflictDeterminator.isAConflictWith(KeyBindingConflicts.IN_GAME)
@@ -52,20 +62,25 @@ public enum MouseButtons implements StringIdentifiable {
 
         @Override
         public Text getLocalizedName(InputUtil.Key key, Supplier<Text> defaultedValue) {
-            return  Text.literal(key
+            return Text.literal(key
                     .getLocalizedText()
                     .getString() + defaultedValue
                     .get()
                     .getString());
         }
     },
-    MOUSE_3{
+    MOUSE_3 {
         @Override
         public boolean isMatchedBy(InputUtil.Key key) {
             return key.getCode() == GLFW.GLFW_MOUSE_BUTTON_3;
         }
 
         @Override
+        public int getGLFWValue() {
+            return GLFW.GLFW_MOUSE_BUTTON_3;
+        }
+
+        @Override
         public boolean isActivated(@org.jetbrains.annotations.Nullable IKeyConflictDeterminator conflictDeterminator) {
             return conflictDeterminator != null
                     && !conflictDeterminator.isAConflictWith(KeyBindingConflicts.IN_GAME)
@@ -76,20 +91,25 @@ public enum MouseButtons implements StringIdentifiable {
 
         @Override
         public Text getLocalizedName(InputUtil.Key key, Supplier<Text> defaultedValue) {
-            return  Text.literal(key
+            return Text.literal(key
                     .getLocalizedText()
                     .getString() + defaultedValue
                     .get()
                     .getString());
         }
     },
-    MOUSE_4{
+    MOUSE_4 {
         @Override
         public boolean isMatchedBy(InputUtil.Key key) {
             return key.getCode() == GLFW.GLFW_MOUSE_BUTTON_4;
         }
 
         @Override
+        public int getGLFWValue() {
+            return GLFW.GLFW_MOUSE_BUTTON_4;
+        }
+
+        @Override
         public boolean isActivated(@org.jetbrains.annotations.Nullable IKeyConflictDeterminator conflictDeterminator) {
             return conflictDeterminator != null
                     && !conflictDeterminator.isAConflictWith(KeyBindingConflicts.IN_GAME)
@@ -100,20 +120,25 @@ public enum MouseButtons implements StringIdentifiable {
 
         @Override
         public Text getLocalizedName(InputUtil.Key key, Supplier<Text> defaultedValue) {
-            return  Text.literal(key
+            return Text.literal(key
                     .getLocalizedText()
                     .getString() + defaultedValue
                     .get()
                     .getString());
         }
     },
-    MOUSE_5{
+    MOUSE_5 {
         @Override
         public boolean isMatchedBy(InputUtil.Key key) {
             return key.getCode() == GLFW.GLFW_MOUSE_BUTTON_5;
         }
 
         @Override
+        public int getGLFWValue() {
+            return GLFW.GLFW_MOUSE_BUTTON_5;
+        }
+
+        @Override
         public boolean isActivated(@org.jetbrains.annotations.Nullable IKeyConflictDeterminator conflictDeterminator) {
             return conflictDeterminator != null
                     && !conflictDeterminator.isAConflictWith(KeyBindingConflicts.IN_GAME)
@@ -124,20 +149,25 @@ public enum MouseButtons implements StringIdentifiable {
 
         @Override
         public Text getLocalizedName(InputUtil.Key key, Supplier<Text> defaultedValue) {
-            return  Text.literal(key
+            return Text.literal(key
                     .getLocalizedText()
                     .getString() + defaultedValue
                     .get()
                     .getString());
         }
     },
-    MOUSE_6{
+    MOUSE_6 {
         @Override
         public boolean isMatchedBy(InputUtil.Key key) {
             return key.getCode() == GLFW.GLFW_MOUSE_BUTTON_6;
         }
 
         @Override
+        public int getGLFWValue() {
+            return GLFW.GLFW_MOUSE_BUTTON_6;
+        }
+
+        @Override
         public boolean isActivated(@org.jetbrains.annotations.Nullable IKeyConflictDeterminator conflictDeterminator) {
             return conflictDeterminator != null
                     && !conflictDeterminator.isAConflictWith(KeyBindingConflicts.IN_GAME)
@@ -148,20 +178,25 @@ public enum MouseButtons implements StringIdentifiable {
 
         @Override
         public Text getLocalizedName(InputUtil.Key key, Supplier<Text> defaultedValue) {
-            return  Text.literal(key
+            return Text.literal(key
                     .getLocalizedText()
                     .getString() + defaultedValue
                     .get()
                     .getString());
         }
     },
-    MOUSE_7{
+    MOUSE_7 {
         @Override
         public boolean isMatchedBy(InputUtil.Key key) {
             return key.getCode() == GLFW.GLFW_MOUSE_BUTTON_7;
         }
 
         @Override
+        public int getGLFWValue() {
+            return GLFW.GLFW_MOUSE_BUTTON_7;
+        }
+
+        @Override
         public boolean isActivated(@org.jetbrains.annotations.Nullable IKeyConflictDeterminator conflictDeterminator) {
             return conflictDeterminator != null
                     && !conflictDeterminator.isAConflictWith(KeyBindingConflicts.IN_GAME)
@@ -172,17 +207,22 @@ public enum MouseButtons implements StringIdentifiable {
 
         @Override
         public Text getLocalizedName(InputUtil.Key key, Supplier<Text> defaultedValue) {
-            return  Text.literal(key
+            return Text.literal(key
                     .getLocalizedText()
                     .getString() + defaultedValue
                     .get()
                     .getString());
         }
     },
-    MOUSE_8{
+    MOUSE_8 {
         @Override
         public boolean isMatchedBy(InputUtil.Key key) {
             return key.getCode() == GLFW.GLFW_MOUSE_BUTTON_8;
+        }
+
+        @Override
+        public int getGLFWValue() {
+            return GLFW.GLFW_MOUSE_BUTTON_8;
         }
 
         @Override
@@ -196,7 +236,7 @@ public enum MouseButtons implements StringIdentifiable {
 
         @Override
         public Text getLocalizedName(InputUtil.Key key, Supplier<Text> defaultedValue) {
-            return  Text.literal(key
+            return Text.literal(key
                     .getLocalizedText()
                     .getString() + defaultedValue
                     .get()
@@ -207,6 +247,11 @@ public enum MouseButtons implements StringIdentifiable {
         @Override
         public boolean isMatchedBy(InputUtil.Key key) {
             return false;
+        }
+
+        @Override
+        public int getGLFWValue() {
+            return GLFW.GLFW_KEY_UNKNOWN;
         }
 
         @Override
@@ -224,11 +269,6 @@ public enum MouseButtons implements StringIdentifiable {
         }
     };
 
-    @Override
-    public String asString() {
-        return this.name();
-    }
-
     public static final MouseButtons[] MOUSE_BUTTONS = {MOUSE_1, MOUSE_2, MOUSE_3, MOUSE_4, MOUSE_5, MOUSE_6, MOUSE_7, MOUSE_8};
 
     public static MouseButtons getActiveMouseButton() {
@@ -244,6 +284,14 @@ public enum MouseButtons implements StringIdentifiable {
                 .stream(MOUSE_BUTTONS)
                 .anyMatch(km -> km.isMatchedBy(key));
     }
+
+
+    @Override
+    public String asString() {
+        return this.name();
+    }
+
+    public abstract int getGLFWValue();
 
     public abstract boolean isMatchedBy(InputUtil.Key key);
 

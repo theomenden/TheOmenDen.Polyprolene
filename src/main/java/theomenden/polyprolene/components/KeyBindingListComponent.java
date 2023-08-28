@@ -10,6 +10,7 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 import theomenden.polyprolene.client.PolyproleneKeyboardScreen;
+import theomenden.polyprolene.mixin.keys.KeyBindAccessor;
 import theomenden.polyprolene.utils.KeyInfoUtils;
 
 import java.util.Arrays;
@@ -34,6 +35,18 @@ public class KeyBindingListComponent extends FreeFormListComponent<KeyBindingLis
         this.setSelected(this
                 .children()
                 .get(0));
+    }
+
+    private static boolean extracted(KeyBinding binding, String[] words) {
+        boolean flag = true;
+        for (String w : words) {
+            flag = flag && I18n
+                    .translate(binding.getTranslationKey())
+                    .toLowerCase()
+                    .contains(w.toLowerCase());
+        }
+
+        return flag;
     }
 
     @Override
@@ -123,16 +136,7 @@ public class KeyBindingListComponent extends FreeFormListComponent<KeyBindingLis
         String[] words = bindingName.split("\\s+");
         KeyBinding[] bindingsFiltered = Arrays
                 .stream(bindings)
-                .filter(binding -> {
-                    boolean flag = true;
-                    for (String w : words) {
-                        flag = flag && I18n
-                                .translate(binding.getTranslationKey())
-                                .toLowerCase()
-                                .contains(w.toLowerCase());
-                    }
-                    return flag;
-                })
+                .filter(binding -> extracted(binding, words))
                 .toArray(KeyBinding[]::new);
         return bindingsFiltered;
     }
@@ -142,34 +146,32 @@ public class KeyBindingListComponent extends FreeFormListComponent<KeyBindingLis
                 .stream(bindings)
                 .filter(b -> {
                     Text t = b.getBoundKeyLocalizedText();
-                    if (t instanceof TranslatableText) {
-                        return I18n
-                                .translate(((TranslatableText) t).getKey())
-                                .equalsIgnoreCase(keyName);
-                    } else {
-                        return t
-                                .asString()
-                                .toLowerCase()
-                                .equals(keyName.toLowerCase());
-                    }
+
+                    return I18n
+                            .translate(t.getString())
+                            .equalsIgnoreCase(keyName)
+                            || t
+                            .getString()
+                            .equalsIgnoreCase(keyName);
+
                 })
                 .toArray(KeyBinding[]::new);
     }
 
     private KeyBinding[] getBindingsByCategory(String category) {
-        KeyBinding[] bindings = Arrays.copyOf(this.client.options.keysAll, this.client.options.keysAll.length);
+        KeyBinding[] bindings = Arrays.copyOf(this.client.options.allKeys, this.client.options.allKeys.length);
         switch (category) {
-            case KeyBindingUtil.DYNAMIC_CATEGORY_ALL:
+            case KeyInfoUtils.DYNAMIC_CATEGORIES:
                 return bindings;
-            case KeyBindingUtil.DYNAMIC_CATEGORY_CONFLICTS:
-                Map<InputUtil.Key, Integer> bindingCounts = KeyBindingUtil.getBindingCountsByKey();
+            case KeyInfoUtils.DYNAMIC_CATEGORIES_WITH_CONFLICTS:
+                Map<InputUtil.Key, Integer> bindingCounts = KeyInfoUtils.getGroupedKeyBindingsByKey();
                 return Arrays
                         .stream(bindings)
-                        .filter(b -> bindingCounts.get(((KeyBindingAccessor) b).getBoundKey()) > 1 && ((KeyBindingAccessor) b)
+                        .filter(b -> bindingCounts.get(((KeyBindAccessor) b).getBoundKey()) > 1 && ((KeyBindAccessor) b)
                                 .getBoundKey()
                                 .getCode() != -1)
                         .toArray(KeyBinding[]::new);
-            case KeyBindingUtil.DYNAMIC_CATEGORY_UNBOUND:
+            case KeyInfoUtils.DYNAMIC_CATEGORIES_UNBOUND:
                 return Arrays
                         .stream(bindings)
                         .filter(b -> b.isUnbound())

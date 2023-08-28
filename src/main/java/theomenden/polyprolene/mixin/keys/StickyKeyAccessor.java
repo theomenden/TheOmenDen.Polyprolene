@@ -1,4 +1,4 @@
-package theomenden.polyprolene.mixin;
+package theomenden.polyprolene.mixin.keys;
 
 import net.minecraft.client.option.StickyKeyBinding;
 import org.spongepowered.asm.mixin.Mixin;
@@ -8,5 +8,6 @@ import java.util.function.BooleanSupplier;
 
 @Mixin(StickyKeyBinding.class)
 public interface StickyKeyAccessor {
-    @Accessor public BooleanSupplier getToggleGetter();
+    @Accessor
+    public BooleanSupplier getToggleGetter();
 }

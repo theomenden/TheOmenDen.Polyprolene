@@ -1,4 +1,4 @@
-package theomenden.polyprolene.mixin;
+package theomenden.polyprolene.mixin.keys;
 
 import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
 import net.minecraft.client.option.KeyBinding;

@@ -1,4 +1,4 @@
-package theomenden.polyprolene.mixin;
+package theomenden.polyprolene.mixin.keys;
 
 import net.minecraft.client.Keyboard;
 import net.minecraft.client.MinecraftClient;
@@ -20,14 +20,12 @@ public abstract class KeyboardMixin {
     private MinecraftClient client;
 
     @Inject(method = "onKey", at = @At("TAIL"))
-    private void gOnKey(long window, int key, int scancode, int action, int modifiers, CallbackInfo ci) {
+    private void onKeyTail(long window, int key, int scancode, int action, int modifiers, CallbackInfo ci) {
         final Screen currentScreen = this.client.currentScreen;
 
-        if (!(currentScreen instanceof KeybindsScreen)) {
+        if (!(currentScreen instanceof KeybindsScreen keybindsScreen)) {
             return;
         }
-
-        final KeybindsScreen keybindsScreen = (KeybindsScreen) currentScreen;
 
         if (keybindsScreen.lastKeyCodeUpdateTime > Util.getMeasuringTimeMs() - 20L) {
             return;

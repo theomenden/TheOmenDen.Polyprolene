@@ -15,23 +15,19 @@ import theomenden.polyprolene.models.KeyBindSuggestion;
 import java.util.List;
 
 public class PolyproleneScreen extends Screen {
-    private final int SUGGESTION_COLOR = 0x999999;
-    private final int HIGHLIGHT_COLOR = 0xFFFF00;
+    private final static int SUGGESTION_COLOR = 0x999999;
+    private final static int HIGHLIGHT_COLOR = 0xFFFF00;
 
     public static double offsetX = 0d;
     public static double offsetY = 0d;
-
-    private int baseX;
-    private int baseY;
-
-    private TextFieldWidget textFieldWidget;
-    private AutoCompleteResult autoCompleteResult;
-    private int selectedOption = 0;
-    private int optionsOffset = 0;
-
     public int configurableWidth = 250;
     public int lineHeight = 12;
-
+    private int baseX;
+    private int baseY;
+    private TextFieldWidget textFieldWidget;
+    private final AutoCompleteResult autoCompleteResult;
+    private int selectedOption = 0;
+    private int optionsOffset = 0;
     private InputUtil.Key conflictedKey = InputUtil.UNKNOWN_KEY;
 
     public PolyproleneScreen() {
@@ -40,25 +36,6 @@ public class PolyproleneScreen extends Screen {
         autoCompleteResult.updateSuggestionsList("");
         offsetX = PolyproleneClient.configuration.launcherX;
         offsetY = PolyproleneClient.configuration.launcherY;
-    }
-
-    @Override
-    protected void init() {
-        baseX = (width - configurableWidth) / 2;
-        baseY = (height - lineHeight) / 2;
-
-        String text = "";
-
-        if(textFieldWidget != null) {
-            text = textFieldWidget.getText();
-        }
-
-        textFieldWidget = new TextFieldWidget(textRenderer, getFittedX(), getFittedY() + 1, configurableWidth, lineHeight, NarratorManager.EMPTY);
-        textFieldWidget.setDrawsBackground(false);
-        textFieldWidget.setChangedListener(this::onTextChangedListener);
-        textFieldWidget.setText(text);
-        addSelectableChild(textFieldWidget);
-        setInitialFocus(textFieldWidget);
     }
 
     @Override
@@ -73,16 +50,16 @@ public class PolyproleneScreen extends Screen {
 
         int y = getFittedY();
 
-        for(int i = optionsOffset; i  - optionsOffset < PolyproleneClient.configuration.maximumAutoSuggestions; i++) {
-            if(providedSuggestions.size() <= i) {
+        for (int i = optionsOffset; i - optionsOffset < PolyproleneClient.configuration.maximumAutoSuggestions; i++) {
+            if (providedSuggestions.size() <= i) {
                 break;
             }
 
             KeyBindSuggestion sg = providedSuggestions.get(i);
 
-            y+= lineHeight;
-            if(sg.isAFavorite) {
-                context.fill(getFittedX()-3,y-2, getFittedX()-1, y+ lineHeight - 2, HIGHLIGHT_COLOR | backgroundColor);
+            y += lineHeight;
+            if (sg.isAFavorite) {
+                context.fill(getFittedX() - 3, y - 2, getFittedX() - 1, y + lineHeight - 2, HIGHLIGHT_COLOR | backgroundColor);
             }
 
             context.drawTextWithShadow(textRenderer, sg.name, getFittedX(), y, i == selectedOption ? HIGHLIGHT_COLOR : SUGGESTION_COLOR);
@@ -95,25 +72,84 @@ public class PolyproleneScreen extends Screen {
     }
 
     @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (PolyproleneClient.favoriteKey.matchesKey(keyCode, scanCode)) {
+            List<KeyBindSuggestion> keyBindSuggestions = autoCompleteResult.getCurrentSuggestions();
+
+            if (keyBindSuggestions.size() > selectedOption) {
+                AutoCompleteResult.toggleFavorite(keyBindSuggestions.get(selectedOption));
+                return true;
+            }
+        }
+
+        if (keyCode == GLFW.GLFW_KEY_UP) {
+            changeSelection(-1);
+            return true;
+        }
+
+        if (keyCode == GLFW.GLFW_KEY_DOWN) {
+            changeSelection(1);
+            return true;
+        }
+
+        if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+            List<KeyBindSuggestion> keyBindSuggestions = autoCompleteResult.getCurrentSuggestions();
+            client.setScreen(null);
+
+            if (keyBindSuggestions.size() > selectedOption) {
+                keyBindSuggestions
+                        .get(selectedOption)
+                        .execute();
+            }
+
+            return true;
+        }
+
+        return textFieldWidget.keyPressed(keyCode, scanCode, modifiers)
+                || super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    protected void init() {
+        baseX = (width - configurableWidth) / 2;
+        baseY = (height - lineHeight) / 2;
+
+        String text = "";
+
+        if (textFieldWidget != null) {
+            text = textFieldWidget.getText();
+        }
+
+        textFieldWidget = new TextFieldWidget(textRenderer, getFittedX(), getFittedY() + 1, configurableWidth, lineHeight, NarratorManager.EMPTY);
+        textFieldWidget.setDrawsBackground(false);
+        textFieldWidget.setChangedListener(this::onTextChangedListener);
+        textFieldWidget.setText(text);
+        addSelectableChild(textFieldWidget);
+        setInitialFocus(textFieldWidget);
+    }
+
+    @Override
     public void tick() {
-       textFieldWidget.tick();
+        textFieldWidget.tick();
     }
 
     @Override
     public void removed() {
         PolyproleneClient.configuration.launcherX = offsetX;
         PolyproleneClient.configuration.launcherY = offsetY;
-        AutoConfig.getConfigHolder(PolyproleneConfig.class).save();
-    }
-
-    @Override
-    public void resize(MinecraftClient client, int width, int height) {
-        init(client, width, height);
+        AutoConfig
+                .getConfigHolder(PolyproleneConfig.class)
+                .save();
     }
 
     @Override
     public boolean shouldPause() {
         return false;
+    }
+
+    @Override
+    public void resize(MinecraftClient client, int width, int height) {
+        init(client, width, height);
     }
 
     @Override
@@ -124,14 +160,6 @@ public class PolyproleneScreen extends Screen {
 
         offsetX = 0;
         offsetY = 0;
-        init();
-        return true;
-    }
-
-    @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button , double deltaX, double deltaY) {
-        offsetX = fitX(offsetX + deltaX + baseX) - baseX;
-        offsetY = fitY(offsetY + deltaY + baseY) - baseY;
         init();
         return true;
     }
@@ -149,39 +177,11 @@ public class PolyproleneScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if(PolyproleneClient.favoriteKey.matchesKey(keyCode, scanCode)) {
-            List<KeyBindSuggestion> keyBindSuggestions = autoCompleteResult.getCurrentSuggestions();
-
-            if(keyBindSuggestions.size() > selectedOption) {
-                AutoCompleteResult.toggleFavorite(keyBindSuggestions.get(selectedOption));
-                return true;
-            }
-        }
-
-        if(keyCode == GLFW.GLFW_KEY_UP) {
-            changeSelection(-1);
-            return true;
-        }
-
-        if(keyCode == GLFW.GLFW_KEY_DOWN) {
-            changeSelection(1);
-            return true;
-        }
-
-        if(keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
-            List<KeyBindSuggestion> keyBindSuggestions = autoCompleteResult.getCurrentSuggestions();
-            client.setScreen(null);
-
-            if(keyBindSuggestions.size() > selectedOption) {
-                keyBindSuggestions.get(selectedOption).execute();
-            }
-
-            return true;
-        }
-
-        return textFieldWidget.keyPressed(keyCode, scanCode, modifiers)
-                || super.keyPressed(keyCode,scanCode, modifiers);
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+        offsetX = fitX(offsetX + deltaX + baseX) - baseX;
+        offsetY = fitY(offsetY + deltaY + baseY) - baseY;
+        init();
+        return true;
     }
 
     public void onTextChangedListener(String s) {
@@ -191,21 +191,23 @@ public class PolyproleneScreen extends Screen {
     }
 
     public void changeSelection(int by) {
-        int totalSuggestions = autoCompleteResult.getCurrentSuggestions().size();
+        int totalSuggestions = autoCompleteResult
+                .getCurrentSuggestions()
+                .size();
 
-        if(totalSuggestions == 0){
+        if (totalSuggestions == 0) {
             selectedOption = 0;
             return;
         }
 
         selectedOption = ((selectedOption + by + totalSuggestions)) % totalSuggestions;
 
-        if(optionsOffset > selectedOption) {
+        if (optionsOffset > selectedOption) {
             optionsOffset = selectedOption;
             return;
         }
 
-        if(optionsOffset + PolyproleneClient.configuration.maximumAutoSuggestions <= selectedOption) {
+        if (optionsOffset + PolyproleneClient.configuration.maximumAutoSuggestions <= selectedOption) {
             optionsOffset = selectedOption - PolyproleneClient.configuration.maximumAutoSuggestions + 1;
         }
     }
@@ -215,20 +217,23 @@ public class PolyproleneScreen extends Screen {
     }
 
     private double fitX(double x) {
-        return Range.between(0.0, x).fit(width-x);
+        return Range
+                .between(0.0, x)
+                .fit(width - x);
     }
 
     private double fitY(double y) {
-        return Range.between(0.0, (double)(height-lineHeight * PolyproleneClient.configuration.maximumAutoSuggestions + 1))
+        return Range
+                .between(0.0, (double) (height - lineHeight * PolyproleneClient.configuration.maximumAutoSuggestions + 1))
                 .fit(y);
     }
 
     private int getFittedX() {
-        return (int)(fitX(baseX + offsetX));
+        return (int) (fitX(baseX + offsetX));
     }
 
     private int getFittedY() {
-        return (int)(fitY(baseY + offsetY));
+        return (int) (fitY(baseY + offsetY));
     }
 
 }
