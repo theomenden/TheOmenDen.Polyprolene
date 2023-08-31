@@ -1,6 +1,6 @@
 package theomenden.polyprolene.components;
 
-import me.shedaniel.clothconfig2.api.TickableWidget;
+import lombok.Getter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -16,6 +16,7 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableTextContent;
 import org.apache.commons.compress.utils.Lists;
 import theomenden.polyprolene.client.PolyproleneKeyboardScreen;
+import theomenden.polyprolene.interfaces.ITickableElement;
 import theomenden.polyprolene.mixin.keys.KeyBindAccessor;
 
 import java.util.ArrayList;
@@ -23,13 +24,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public final class KeyComponent extends PressableWidget implements TickableWidget {
+public final class KeyComponent extends PressableWidget implements ITickableElement {
     private final InputUtil.Key key;
     private final PolyproleneKeyboardScreen polyproleneKeyboardScreen;
     private final float xCoord;
     private final float yCoord;
     private final float width;
     private final float height;
+    @Getter
     private List<Text> tooltipText = Lists.newArrayList();
 
     public KeyComponent(PolyproleneKeyboardScreen screen, int keyCode, float x, float y, float width, float height, InputUtil.Type keyType) {
@@ -94,6 +96,28 @@ public final class KeyComponent extends PressableWidget implements TickableWidge
                 color);
     }
 
+    @Override
+    protected void appendClickableNarrations(NarrationMessageBuilder builder) {
+        builder.put(NarrationPart.HINT, this.getNarrationMessage());
+        builder.nextMessage();
+    }
+
+    private void updateTooltip() {
+        ArrayList<String> tooltipText = Arrays
+                .stream(MinecraftClient.getInstance().options.allKeys)
+                .filter(b -> ((KeyBindAccessor) b)
+                        .getBoundKey()
+                        .equals(this.key))
+                .map(b -> I18n.translate(b.getTranslationKey()))
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        this.tooltipText = tooltipText
+                .stream()
+                .sorted()
+                .map(s -> MutableText.of(new TranslatableTextContent(s, this.key.getTranslationKey(), null)))
+                .collect(Collectors.toCollection(ArrayList<Text>::new));
+    }
+
     private int getColor() {
         int bindingCount = this.tooltipText.size();
 
@@ -125,25 +149,4 @@ public final class KeyComponent extends PressableWidget implements TickableWidge
         return color;
     }
 
-    @Override
-    protected void appendClickableNarrations(NarrationMessageBuilder builder) {
-        builder.put(NarrationPart.HINT, this.getNarrationMessage());
-        builder.nextMessage();
-    }
-
-    private void updateTooltip() {
-        ArrayList<String> tooltipText = Arrays
-                .stream(MinecraftClient.getInstance().options.allKeys)
-                .filter(b -> ((KeyBindAccessor) b)
-                        .getBoundKey()
-                        .equals(this.key))
-                .map(b -> I18n.translate(b.getTranslationKey()))
-                .collect(Collectors.toCollection(ArrayList::new));
-
-        this.tooltipText = tooltipText
-                .stream()
-                .sorted()
-                .map(s -> MutableText.of(new TranslatableTextContent(s, this.key.getTranslationKey(), null)))
-                .collect(Collectors.toCollection(ArrayList<Text>::new));
-    }
 }

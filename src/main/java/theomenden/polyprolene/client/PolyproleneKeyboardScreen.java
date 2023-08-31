@@ -1,6 +1,7 @@
 package theomenden.polyprolene.client;
 
-import me.shedaniel.clothconfig2.api.TickableWidget;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -20,6 +21,7 @@ import theomenden.polyprolene.components.KeyBindingListComponent;
 import theomenden.polyprolene.components.KeyboardComponent;
 import theomenden.polyprolene.components.KeyboardComponentBuilder;
 import theomenden.polyprolene.enums.MouseButtons;
+import theomenden.polyprolene.interfaces.ITickableElement;
 import theomenden.polyprolene.models.records.ButtonDimensions;
 import theomenden.polyprolene.models.records.ButtonWidgetBase;
 import theomenden.polyprolene.models.records.ButtonWidgetConstruct;
@@ -28,6 +30,7 @@ import theomenden.polyprolene.utils.KeyInfoUtils;
 
 import java.util.Arrays;
 
+@Environment(EnvType.CLIENT)
 public class PolyproleneKeyboardScreen extends GameOptionsScreen {
     private int mouseCodeIndex = 0;
     private KeyboardComponent keyboard;
@@ -54,8 +57,9 @@ public class PolyproleneKeyboardScreen extends GameOptionsScreen {
         int mouseButtonHeight = 20;
 
         final int[] maxBindingNameWidth = {0};
+        final KeyBinding[] allKeys = this.client.options.allKeys;
         Arrays
-                .stream(this.client.options.allKeys)
+                .stream(allKeys)
                 .forEach(k -> {
                     int w = this.textRenderer.getWidth(Text.translatable(k.getTranslationKey()));
                     if (w > maxBindingNameWidth[0]) {
@@ -76,11 +80,9 @@ public class PolyproleneKeyboardScreen extends GameOptionsScreen {
 
         int bindingListWidth = (maxBindingNameWidth[0] + 20);
         this.bindingList = new KeyBindingListComponent(this, 10, 10, bindingListWidth, this.height - 40, this.textRenderer.fontHeight * 3 + 10);
-        this.keyboard = KeyboardComponentBuilder.buildStandardKeyBoard(this, bindingListWidth + 15, this.height / 2 - 90, this.width - (bindingListWidth + 15), 180);
+        this.keyboard = KeyboardComponentBuilder.buildStandardKeyBoard(this, bindingListWidth + 15, (float) this.height / 2f - 90, this.width - (bindingListWidth + 15), 180);
         this.categorySelector = new CategoryComponent(this, bindingListWidth + 15, 5, maxCategoryWidth[0] + 20, 20);
-        this.screenToggler = new TexturedButtonWidget(this.width - 22, this.height - 22, 20, 20, 20, 0, 20, PolyproleneClient.SCREEN_WIDGETS, 40, 40, (btn) -> {
-            this.client.setScreen(new ControlsOptionsScreen(this.parent, this.gameOptions));
-        });
+        this.screenToggler = new TexturedButtonWidget(this.width - 22, this.height - 22, 20, 20, 20, 0, 20, PolyproleneClient.SCREEN_WIDGETS, 40, 40, (btn) -> this.client.setScreen(new ControlsOptionsScreen(this.parent, this.gameOptions)));
         this.searchBar = new TextFieldWidget(this.textRenderer, 10, this.height - 20, bindingListWidth, 14, Text.of(""));
 
         this.mouseButtons = KeyboardComponentBuilder.buildSingleKeyKeyboard(this, mouseButtonX, mouseButtonY, mouseButtonWidth, mouseButtonHeight, MouseButtons.MOUSE_BUTTONS[mouseCodeIndex], InputUtil.Type.MOUSE);
@@ -170,8 +172,8 @@ public class PolyproleneKeyboardScreen extends GameOptionsScreen {
         this
                 .children()
                 .stream()
-                .filter(e -> e instanceof TickableWidget)
-                .forEach(e -> ((TickableWidget) e).tick());
+                .filter(e -> e instanceof ITickableElement)
+                .forEach(e -> ((ITickableElement) e).tick());
     }
 
     @Override

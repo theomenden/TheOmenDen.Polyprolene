@@ -1,6 +1,5 @@
 package theomenden.polyprolene.components;
 
-import me.shedaniel.clothconfig2.api.TickableWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
@@ -10,6 +9,7 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 import theomenden.polyprolene.client.PolyproleneKeyboardScreen;
+import theomenden.polyprolene.interfaces.ITickableElement;
 import theomenden.polyprolene.mixin.keys.KeyBindAccessor;
 import theomenden.polyprolene.utils.KeyInfoUtils;
 
@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class KeyBindingListComponent extends FreeFormListComponent<KeyBindingListComponent.BindingEntry> implements TickableWidget {
+public class KeyBindingListComponent extends FreeFormListComponent<KeyBindingListComponent.BindingEntry> implements ITickableElement {
     public PolyproleneKeyboardScreen screen;
     private String currentFilterText = "";
     private String currentCategory = KeyInfoUtils.DYNAMIC_CATEGORIES;

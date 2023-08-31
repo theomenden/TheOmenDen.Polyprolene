@@ -3,7 +3,6 @@ package theomenden.polyprolene.components;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.Getter;
-import me.shedaniel.clothconfig2.api.TickableWidget;
 import net.minecraft.client.gui.AbstractParentElement;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Drawable;
@@ -12,12 +11,14 @@ import net.minecraft.client.gui.screen.narration.Narration;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.screen.narration.NarrationPart;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.text.Text;
 import theomenden.polyprolene.client.PolyproleneKeyboardScreen;
+import theomenden.polyprolene.interfaces.ITickableElement;
 
 import java.util.List;
 import java.util.Map;
 
-public final class KeyboardComponent extends AbstractParentElement implements Drawable, TickableWidget, Selectable {
+public final class KeyboardComponent extends AbstractParentElement implements Drawable, ITickableElement, Selectable {
     private final Map<Integer, KeyComponent> keyboardComponentMap = Maps.newHashMap();
     @Getter
     private final float anchorX;
@@ -45,15 +46,19 @@ public final class KeyboardComponent extends AbstractParentElement implements Dr
         keys.forEach(key -> key.render(context, mouseX, mouseY, delta));
 
         if (!polyproleneKeyboardScreen.getExtendedCategorySelector()) {
-            keys
-                    .stream()
-                    .filter(k -> k.active && k.isHovered())
-                    .forEach(k ->
-                            polyproleneKeyboardScreen
-                                    .renderWithTooltip(context,
-                                            mouseX,
-                                            mouseY,
-                                            delta));
+            for (KeyComponent key : keys) {
+                if (key.active && key.isHovered()) {
+                    var positioner = key
+                            .getTooltipText()
+                            .stream()
+                            .map(
+                                    Text::asOrderedText
+                            )
+                            .toList();
+                    this.polyproleneKeyboardScreen
+                            .setTooltip(positioner);
+                }
+            }
         }
 
     }

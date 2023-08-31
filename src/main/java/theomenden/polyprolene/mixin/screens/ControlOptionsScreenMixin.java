@@ -35,9 +35,7 @@ public abstract class ControlOptionsScreenMixin extends GameOptionsScreen {
                 PolyproleneClient.SCREEN_WIDGETS,
                 40,
                 40,
-                button -> {
-                    client.setScreen(new PolyproleneKeyboardScreen(this.parent));
-                }
+                this::onClickHandler
         );
         this.addDrawableChild(screenToggler);
 

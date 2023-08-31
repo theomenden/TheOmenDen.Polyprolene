@@ -18,6 +18,7 @@ public abstract class FreeFormListComponent<T extends FreeFormListComponent<T>.E
         this.left = left;
         this.height = height;
         this.width = width;
+        this.bottom = top + height;
         this.right = left + width;
 
         this.setRenderBackground(false);
@@ -32,6 +33,7 @@ public abstract class FreeFormListComponent<T extends FreeFormListComponent<T>.E
     @Override
     protected void renderBackground(DrawContext context) {
         context.fillGradient(this.left, this.top, this.right, this.bottom, -1072689136, -804253680);
+        context.draw();
     }
 
     @Override
@@ -101,9 +103,8 @@ public abstract class FreeFormListComponent<T extends FreeFormListComponent<T>.E
                     var mouseIsOver = this.isMouseOver(mouseX, mouseY) && Objects.equals(this.getEntryAtPosition(mouseX, mouseY), entry);
 
                     entry.render(context, i, this.getRowTop(i), this.getRowLeft(), this.width, this.itemHeight - 4, mouseX, mouseY, mouseIsOver, delta);
-                    RenderSystem.disableScissor();
                 });
-
+        RenderSystem.disableScissor();
     }
 
     @Override

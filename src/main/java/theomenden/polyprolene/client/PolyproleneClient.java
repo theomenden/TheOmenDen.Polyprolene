@@ -20,13 +20,43 @@ import theomenden.polyprolene.providers.VanillaKeyBindingSuggestionProvider;
 public final class PolyproleneClient implements ClientModInitializer {
 
     public static final String MODID = "polyprolene";
-    public static final Identifier SCREEN_WIDGETS = new Identifier(MODID, "");
+    public static final Identifier SCREEN_WIDGETS = new Identifier(MODID, "assets/screen_toggler.png");
     public static final ModifierKeys CURRENT_MODIFIERS = new ModifierKeys();
     private static final Logger LOGGER = LoggerFactory.getLogger(MODID);
     public static PolyproleneConfig configuration;
     public static KeyBinding launchingKey;
     public static KeyBinding favoriteKey;
     public static KeyBinding wizardkey;
+
+    public static VanillaKeyBindingSuggestionProvider createVanillaKeyBindingSuggestions() {
+        return new VanillaKeyBindingSuggestionProvider();
+    }
+
+    public static void openNewPolyproleneRadialScreen(MinecraftClient client) {
+        client.setScreen(new PolyproleneRadialScreen());
+    }
+
+    public static void openNewPolyproleneWizardScreen(MinecraftClient client) {
+        client.setScreen(new PolyproleneKeyboardScreen(client.currentScreen));
+    }
+
+    public static void openNewPolyproleneScreen(MinecraftClient client) {
+        client.setScreen(new PolyproleneScreen());
+    }
+
+    private static void registerScreensForDisplay(MinecraftClient client) {
+        if (launchingKey.wasPressed()) {
+            if (configuration.shouldShowRadial) {
+                openNewPolyproleneRadialScreen(client);
+            } else {
+                openNewPolyproleneScreen(client);
+            }
+        }
+
+        if (wizardkey.wasPressed()) {
+            openNewPolyproleneWizardScreen(client);
+        }
+    }
 
     @Override
     public void onInitializeClient() {
@@ -57,31 +87,11 @@ public final class PolyproleneClient implements ClientModInitializer {
                 "category.polyprolene"
         ));
 
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (launchingKey.wasPressed()) {
-                openNewPolyproleneScreen(client);
-            }
-
-            if (wizardkey.wasPressed()) {
-                openNewPolyproleneWizardScreen(client);
-            }
-        });
+        ClientTickEvents.END_CLIENT_TICK.register(PolyproleneClient::registerScreensForDisplay);
 
         ClientLifecycleEvents.CLIENT_STARTED.register(t -> AutoCompleteResult.loadDataFromFile());
         ClientLifecycleEvents.CLIENT_STOPPING.register(t -> AutoCompleteResult.saveDataToFiles());
 
         AutoCompleteResult.suggestionProviders.add(createVanillaKeyBindingSuggestions());
-    }
-
-    public VanillaKeyBindingSuggestionProvider createVanillaKeyBindingSuggestions() {
-        return new VanillaKeyBindingSuggestionProvider();
-    }
-
-    public void openNewPolyproleneWizardScreen(MinecraftClient client) {
-        client.setScreen(new PolyproleneKeyboardScreen(client.currentScreen));
-    }
-
-    public void openNewPolyproleneScreen(MinecraftClient client) {
-        client.setScreen(new PolyproleneScreen());
     }
 }

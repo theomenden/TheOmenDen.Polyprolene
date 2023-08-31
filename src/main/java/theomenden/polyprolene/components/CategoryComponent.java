@@ -1,6 +1,6 @@
 package theomenden.polyprolene.components;
 
-import me.shedaniel.clothconfig2.api.TickableWidget;
+import lombok.Getter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.Narration;
@@ -9,13 +9,14 @@ import net.minecraft.client.gui.screen.narration.NarrationPart;
 import net.minecraft.client.gui.widget.PressableWidget;
 import net.minecraft.text.Text;
 import theomenden.polyprolene.client.PolyproleneKeyboardScreen;
+import theomenden.polyprolene.interfaces.ITickableElement;
 import theomenden.polyprolene.utils.KeyInfoUtils;
 
-public final class CategoryComponent extends PressableWidget implements TickableWidget {
-    public PolyproleneKeyboardScreen polyproleneKeyboardScreen;
+public final class CategoryComponent extends PressableWidget implements ITickableElement {
+    private final PolyproleneKeyboardScreen polyproleneKeyboardScreen;
+    @Getter
+    private final BindingCategoryListComponent categoryList;
     public boolean isExtended = false;
-
-    public BindingCategoryListComponent categoryList;
 
     public CategoryComponent(PolyproleneKeyboardScreen screen, int x, int y, int width, int height) {
         super(x, y, width, height, Text.of(""));
@@ -81,10 +82,6 @@ public final class CategoryComponent extends PressableWidget implements Tickable
         return ((BindingCategoryListComponent.CategoryEntry) this.categoryList.getSelectedOrNull()).category;
     }
 
-    public BindingCategoryListComponent getCategoryList() {
-        return this.categoryList;
-    }
-
     public static final class BindingCategoryListComponent extends FreeFormListComponent<BindingCategoryListComponent.CategoryEntry> {
 
         public BindingCategoryListComponent(MinecraftClient client, int top, int left, int width, int height, int itemHeight) {
@@ -106,7 +103,6 @@ public final class CategoryComponent extends PressableWidget implements Tickable
         }
 
         public final class CategoryEntry extends FreeFormListComponent<BindingCategoryListComponent.CategoryEntry>.Entry {
-
             private final String category;
 
             public CategoryEntry(String category) {

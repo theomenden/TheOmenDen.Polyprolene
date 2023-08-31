@@ -4,13 +4,12 @@ import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 import theomenden.polyprolene.client.PolyproleneKeyboardScreen;
 import theomenden.polyprolene.enums.MouseButtons;
+import theomenden.polyprolene.utils.MathUtils;
 
 public class KeyboardComponentBuilder {
-    private static final float INV_12 = 1.0f / 12.0f;
-    private static final float INV_6 = 1.0f / 6.0f;
-    private static final float INV_15 = 1.0f / 15.0f;
 
-    private static final int[] FUNCTION_KEYS = new int[]{GLFW.GLFW_KEY_F1,
+    private static final int[] FUNCTION_KEYS = new int[]{
+            GLFW.GLFW_KEY_F1,
             GLFW.GLFW_KEY_F2,
             GLFW.GLFW_KEY_F3,
             GLFW.GLFW_KEY_F4,
@@ -21,7 +20,8 @@ public class KeyboardComponentBuilder {
             GLFW.GLFW_KEY_F9,
             GLFW.GLFW_KEY_F10,
             GLFW.GLFW_KEY_F11,
-            GLFW.GLFW_KEY_F12};
+            GLFW.GLFW_KEY_F12
+    };
 
     private static final int[] NUMERIC_KEYS = new int[]{
             GLFW.GLFW_KEY_GRAVE_ACCENT,
@@ -94,17 +94,17 @@ public class KeyboardComponentBuilder {
     public static KeyboardComponent buildStandardKeyBoard(PolyproleneKeyboardScreen screen, float anchorX, float anchorY, float width, float height) {
         KeyboardComponent kb = new KeyboardComponent(screen, anchorX, anchorY);
 
-        float currentX = 0;
+        float currentX;
         float currentY = 0;
 
         float keySpacings = 5;
-        float keyWidths = width * INV_12 - keySpacings;
-        float keyHeight = height * INV_6 - keySpacings;
+        float keyWidths = width * MathUtils.INV_12 - keySpacings;
+        float keyHeight = height * MathUtils.INV_6 - keySpacings;
 
         currentX = addUniformHorizontalRow(kb, FUNCTION_KEYS, 0, currentY, keyWidths, keyHeight, keySpacings);
 
         currentY += keyHeight + keySpacings;
-        keyWidths = width * INV_15 - keySpacings;
+        keyWidths = width * MathUtils.INV_15 - keySpacings;
         currentX = addUniformHorizontalRow(kb, NUMERIC_KEYS, 0, currentY, keyWidths, keyHeight, keySpacings);
         currentX = kb.addKeyToMap(currentX, currentY, (keyWidths * 2 + keySpacings), keyHeight, keySpacings, GLFW.GLFW_KEY_BACKSPACE);
 
@@ -112,14 +112,17 @@ public class KeyboardComponentBuilder {
         currentX = kb.addKeyToMap(0, currentY, keyWidths * 2 + keySpacings, keyHeight, keySpacings, GLFW.GLFW_KEY_TAB);
         currentX = addUniformHorizontalRow(kb, QWERTY_KEYS, currentX, currentY, keyWidths, keyHeight, keySpacings);
         currentX = kb.addKeyToMap(currentX, currentY, keyWidths, keyHeight, keySpacings, GLFW.GLFW_KEY_BACKSLASH);
+
         currentY += keyHeight + keySpacings;
         currentX = kb.addKeyToMap(0, currentY, keyWidths * 2 + keySpacings, keyHeight, keySpacings, GLFW.GLFW_KEY_CAPS_LOCK);
         currentX = addUniformHorizontalRow(kb, MIDROW_KEYS, currentX, currentY, keyWidths, keyHeight, keySpacings);
         kb.addKeyToMap(currentX, currentY, (keyWidths * 2 + keySpacings), keyHeight, keySpacings, GLFW.GLFW_KEY_ENTER);
+
         currentY += keyHeight + keySpacings;
         currentX = kb.addKeyToMap(0, currentY, keyWidths * 2 + keySpacings, keyHeight, keySpacings, GLFW.GLFW_KEY_LEFT_SHIFT);
         currentX = addUniformHorizontalRow(kb, LOWER_KEYS, currentX, currentY, keyWidths, keyHeight, keySpacings);
         currentX = kb.addKeyToMap(currentX, currentY, (keyWidths * 3 + keySpacings * 2), keyHeight, keySpacings, GLFW.GLFW_KEY_RIGHT_SHIFT);
+
         currentY += keyHeight + keySpacings;
         keyWidths = width / 7 - keySpacings;
         currentX = addUniformHorizontalRow(kb, FORM_KEYS, 0, currentY, keyWidths, keyHeight, keySpacings);
@@ -143,7 +146,7 @@ public class KeyboardComponentBuilder {
         for (int k : keys) {
             currentX = kb.addKeyToMap(currentX, y, width, height, spacing, k);
         }
-
+        
         return currentX;
     }
 }

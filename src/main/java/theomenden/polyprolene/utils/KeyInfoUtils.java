@@ -5,22 +5,23 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
 import theomenden.polyprolene.mixin.keys.KeyBindAccessor;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class KeyInfoUtils {
-    public static final String DYNAMIC_CATEGORIES = "key.polyprolene.categories.all";
-    public static final String DYNAMIC_CATEGORIES_WITH_CONFLICTS = "key.polyprolene.categories.conflicts";
-    public static final String DYNAMIC_CATEGORIES_UNBOUND = "key.polyprolene.categories.unbound";
+    public static final String DYNAMIC_CATEGORIES = "key.categories.polyprolene.all";
+    public static final String DYNAMIC_CATEGORIES_WITH_CONFLICTS = "key.categories.polyprolene.conflicts";
+    public static final String DYNAMIC_CATEGORIES_UNBOUND = "key.categories.polyprolene.unbound";
 
     public static List<String> getCategories() {
         return KeyBindAccessor
                 .getKEY_CATEGORIES()
                 .stream()
                 .sorted()
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public static List<String> getAppendedDynamicCategories() {

@@ -3,6 +3,9 @@ package theomenden.polyprolene.models;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import lombok.Getter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import theomenden.polyprolene.client.PolyproleneClient;
 import theomenden.polyprolene.interfaces.ISuggestionProvider;
 import theomenden.polyprolene.utils.ConfigurationUtils;
 import theomenden.polyprolene.utils.LoggerUtils;
@@ -21,6 +24,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class AutoCompleteResult {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PolyproleneClient.MODID);
     public static List<ISuggestionProvider> suggestionProviders = Lists.newArrayList();
     public static List<String> suggestionHistory = Lists.newArrayList();
     public static List<String> favorites = Lists.newArrayList();
@@ -93,8 +97,7 @@ public class AutoCompleteResult {
                             .info(e.getMessage());
                     return null;
                 })
-                .thenRun(() -> LoggerUtils
-                        .getLoggerInstance()
+                .thenRun(() -> LOGGER
                         .info(" History written successfully."));
 
         CompletableFuture<Void> favoritesFuture = CompletableFuture
@@ -105,8 +108,7 @@ public class AutoCompleteResult {
                             .info(e.getMessage());
                     return null;
                 })
-                .thenRun(() -> LoggerUtils
-                        .getLoggerInstance()
+                .thenRun(() -> LOGGER
                         .info("Current Favorites written successfully."));
 
         CompletableFuture
@@ -134,8 +136,7 @@ public class AutoCompleteResult {
                 lines = Files.readLines(fileName.toFile(), Charset.defaultCharset());
             }
         } catch (IOException e) {
-            LoggerUtils
-                    .getLoggerInstance()
+            LOGGER
                     .info("Exception occurred while trying to read a Polyprolene '" + fileName + "' file: " + e.getMessage());
         }
 
