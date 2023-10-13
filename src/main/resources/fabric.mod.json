@@ -1,4 +1,7 @@
 {
+  "schemaVersion": 1,
+  "name": "Polyprolene",
+  "version": "${version}",
   "authors": [
     "Alu"
   ],
@@ -16,7 +19,6 @@
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
-    "modmenu": ">=7.2.1",
     "minecraft": "*"
   },
   "description": "A simple, naive attempt at providing a menu for keybind conflicts",
@@ -34,8 +36,5 @@
   "license": "GPL-3.0",
   "mixins": [
     "polyprolene.mixins.json"
-  ],
-  "name": "Polyprolene",
-  "schemaVersion": 1,
-  "version": "${version}"
+  ]
 }

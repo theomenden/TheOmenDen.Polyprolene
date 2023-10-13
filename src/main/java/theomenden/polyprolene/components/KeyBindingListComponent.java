@@ -10,7 +10,6 @@ import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 import theomenden.polyprolene.client.PolyproleneKeyboardScreen;
 import theomenden.polyprolene.interfaces.ITickableElement;
-import theomenden.polyprolene.mixin.keys.KeyBindAccessor;
 import theomenden.polyprolene.utils.KeyInfoUtils;
 
 import java.util.Arrays;

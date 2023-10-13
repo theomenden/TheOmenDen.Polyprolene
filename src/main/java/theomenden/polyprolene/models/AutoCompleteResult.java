@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import theomenden.polyprolene.client.PolyproleneClient;
 import theomenden.polyprolene.interfaces.ISuggestionProvider;
 import theomenden.polyprolene.utils.ConfigurationUtils;
-import theomenden.polyprolene.utils.LoggerUtils;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -92,8 +91,7 @@ public class AutoCompleteResult {
         CompletableFuture<Void> historyFuture = CompletableFuture
                 .runAsync(() -> writeToExistingFile(ConfigurationUtils.getHistoryPath()))
                 .exceptionally(e -> {
-                    LoggerUtils
-                            .getLoggerInstance()
+                    LOGGER
                             .info(e.getMessage());
                     return null;
                 })
@@ -103,8 +101,7 @@ public class AutoCompleteResult {
         CompletableFuture<Void> favoritesFuture = CompletableFuture
                 .runAsync(() -> writeToExistingFile(ConfigurationUtils.getFavoritesPath()))
                 .exceptionally(e -> {
-                    LoggerUtils
-                            .getLoggerInstance()
+                    LOGGER
                             .info(e.getMessage());
                     return null;
                 })
@@ -123,8 +120,7 @@ public class AutoCompleteResult {
                 new FileOutputStream(file.toFile(), true), StandardCharsets.UTF_8))) {
             suggestionHistory.forEach(printWriter::println);
         } catch (IOException e) {
-            LoggerUtils
-                    .getLoggerInstance()
+            LOGGER
                     .info(e.getMessage());
         }
     }
@@ -136,8 +132,7 @@ public class AutoCompleteResult {
                 lines = Files.readLines(fileName.toFile(), Charset.defaultCharset());
             }
         } catch (IOException e) {
-            LOGGER
-                    .info("Exception occurred while trying to read a Polyprolene '" + fileName + "' file: " + e.getMessage());
+            LOGGER.info("Exception occurred while trying to read a Polyprolene {} file: ", fileName, e);
         }
 
         return lines;

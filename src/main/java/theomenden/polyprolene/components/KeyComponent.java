@@ -17,7 +17,6 @@ import net.minecraft.text.TranslatableTextContent;
 import org.apache.commons.compress.utils.Lists;
 import theomenden.polyprolene.client.PolyproleneKeyboardScreen;
 import theomenden.polyprolene.interfaces.ITickableElement;
-import theomenden.polyprolene.mixin.keys.KeyBindAccessor;
 
 import java.util.ArrayList;
 import java.util.Arrays;

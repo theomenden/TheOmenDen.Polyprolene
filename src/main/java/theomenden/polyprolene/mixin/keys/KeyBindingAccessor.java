@@ -8,21 +8,12 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 import java.util.Set;
 
 @Mixin(KeyBinding.class)
-public interface KeyBindAccessor {
-    @Accessor
-    static Set<String> getKEY_CATEGORIES() {
+public interface KeyBindingAccessor {
+    @Accessor("KEY_CATEGORIES")
+    static Set<String> getKeyCategories() {
         throw new AssertionError();
     }
 
     @Accessor
     InputUtil.Key getBoundKey();
-
-    @Accessor
-    int getTimesPressed();
-
-    @Accessor
-    void setTimesPressed(int timesPressed);
-
-    @Accessor
-    void setPressed(boolean wasPressed);
 }

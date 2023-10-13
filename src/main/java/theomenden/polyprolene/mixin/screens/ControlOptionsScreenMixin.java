@@ -8,7 +8,7 @@ import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -17,14 +17,19 @@ import theomenden.polyprolene.client.PolyproleneKeyboardScreen;
 
 @Mixin(ControlsOptionsScreen.class)
 public abstract class ControlOptionsScreenMixin extends GameOptionsScreen {
-
-    public ControlOptionsScreenMixin(Screen screen, GameOptions options, Text title) {
-        super(screen, options, title);
+    public ControlOptionsScreenMixin(Screen parent, GameOptions gameOptions, Text title) {
+        super(null, null, null);
     }
 
-    @Inject(method = "init()V", at = @At("TAIL"))
+    @Shadow
+    protected abstract void method_19872(ButtonWidget par1);
+
+    @Inject(
+            method = "init",
+            at = @At("TAIL")
+    )
     private void onInit(CallbackInfo ci) {
-        TexturedButtonWidget screenToggler = new TexturedButtonWidget(
+        TexturedButtonWidget toggleScreenButton = new TexturedButtonWidget(
                 this.width - 22,
                 this.height - 22,
                 20,
@@ -35,18 +40,10 @@ public abstract class ControlOptionsScreenMixin extends GameOptionsScreen {
                 PolyproleneClient.SCREEN_WIDGETS,
                 40,
                 40,
-                this::onClickHandler
+                btn -> {
+                    client.setScreen(new PolyproleneKeyboardScreen(this.parent));
+                }
         );
-        this.addDrawableChild(screenToggler);
-
+        this.addDrawableChild(toggleScreenButton);
     }
-
-    @Unique
-    protected void onClickHandler(ButtonWidget btn) {
-        assert client != null;
-        PolyproleneKeyboardScreen screen = new PolyproleneKeyboardScreen(this);
-
-        client.setScreen(screen);
-    }
-
 }

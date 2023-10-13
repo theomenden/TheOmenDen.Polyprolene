@@ -1,9 +1,8 @@
 package theomenden.polyprolene.utils;
 
-import com.google.common.collect.ImmutableMap;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
-import theomenden.polyprolene.mixin.keys.KeyBindAccessor;
+import theomenden.polyprolene.mixin.keys.KeyBindingAccessor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,11 +16,11 @@ public class KeyInfoUtils {
     public static final String DYNAMIC_CATEGORIES_UNBOUND = "key.categories.polyprolene.unbound";
 
     public static List<String> getCategories() {
-        return KeyBindAccessor
-                .getKEY_CATEGORIES()
+        return KeyBindingAccessor
+                .getKeyCategories()
                 .stream()
                 .sorted()
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(Collectors.toCollection(ArrayList<String>::new));
     }
 
     public static List<String> getAppendedDynamicCategories() {
@@ -37,6 +36,6 @@ public class KeyInfoUtils {
     public static Map<InputUtil.Key, Integer> getGroupedKeyBindingsByKey() {
         return Arrays
                 .stream(MinecraftClient.getInstance().options.allKeys)
-                .collect(Collectors.toMap(kb -> ((KeyBindAccessor) kb).getBoundKey(), kb -> 1, Integer::sum, ImmutableMap::ofEntries));
+                .collect(Collectors.toUnmodifiableMap(binding -> ((KeyBindingAccessor) binding).getBoundKey(), binding -> 1, Integer::sum));
     }
 }

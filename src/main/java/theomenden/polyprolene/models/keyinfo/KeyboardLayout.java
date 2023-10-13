@@ -9,7 +9,9 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.Nullable;
-import theomenden.polyprolene.utils.LoggerUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import theomenden.polyprolene.client.PolyproleneClient;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -27,6 +29,7 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 @Accessors(fluent = true)
 public class KeyboardLayout {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PolyproleneClient.MODID);
     private static final String LAYOUT_PATH = "";
     protected static KeyboardLayout defaultLayout;
     protected static KeyboardLayout currentLayout;
@@ -46,12 +49,7 @@ public class KeyboardLayout {
                                                              p.toString())), StandardCharsets.UTF_8)) {
 
         } catch (Exception e) {
-            LoggerUtils
-                    .getLoggerInstance()
-                    .warning("Can't load " + p.getFileName() + " due to: " + e.getMessage());
-            LoggerUtils
-                    .getLoggerInstance()
-                    .warning("Stack trace: " + Arrays.toString(e.getStackTrace()));
+            LOGGER.info("Can't load {} + due to exception", p.getFileName(), e);
         }
     }
 
@@ -59,14 +57,10 @@ public class KeyboardLayout {
         FileSystem fs;
         try {
             fs = FileSystems.getFileSystem(layoutUri);
-            LoggerUtils
-                    .getLoggerInstance()
-                    .info("GET_FS");
+            LOGGER.info("GET_FS");
         } catch (Exception e) {
             fs = FileSystems.newFileSystem(layoutUri, Collections.emptyMap());
-            LoggerUtils
-                    .getLoggerInstance()
-                    .info("NEW_FS");
+            LOGGER.info("NEW_FS");
         }
         return fs;
     }
@@ -75,9 +69,7 @@ public class KeyboardLayout {
         if (additionalLayouts.containsKey(code)) {
             return additionalLayouts.get(code);
         }
-        LoggerUtils
-                .getLoggerInstance()
-                .warning("Could not load layout for [" + code + "] defaulting to en_us");
+        LOGGER.info("Could not load layout for [" + code + "] defaulting to en_us");
         return additionalLayouts.get("en_us");
     }
 
@@ -95,25 +87,13 @@ public class KeyboardLayout {
         FileSystem fs;
 
         try {
-            LoggerUtils
-                    .getLoggerInstance()
-                    .warning(String.valueOf(classLoader.getResource("/")));
-            LoggerUtils
-                    .getLoggerInstance()
-                    .warning(String.valueOf(classLoader.getResource(LAYOUT_PATH)));
-
             URI layoutUri = Objects.requireNonNull(
                     Objects
                             .requireNonNull(classLoader.getResource(LAYOUT_PATH))
                             .toURI()
             );
 
-            LoggerUtils
-                    .getLoggerInstance()
-                    .warning("Layout stream source: " + layoutUri);
-            LoggerUtils
-                    .getLoggerInstance()
-                    .warning("Layout stream scheme: " + layoutUri.getScheme());
+            LOGGER.info("Layout stream source: {}\n Layout stream scheme: {}", layoutUri, layoutUri.getScheme());
 
             Path attemptedPath;
 
@@ -142,12 +122,7 @@ public class KeyboardLayout {
             }
 
         } catch (Exception e) {
-            LoggerUtils
-                    .getLoggerInstance()
-                    .severe(e.getMessage());
-            LoggerUtils
-                    .getLoggerInstance()
-                    .info(Arrays.toString(e.getStackTrace()));
+            LOGGER.error("Keyboard Layout exception, closing ", e);
         } finally {
             if (files != null) {
                 files.close();

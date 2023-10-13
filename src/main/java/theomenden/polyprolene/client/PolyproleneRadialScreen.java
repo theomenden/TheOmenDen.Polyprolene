@@ -13,7 +13,6 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.math.MathHelper;
 import org.apache.commons.lang3.Range;
 import theomenden.polyprolene.managers.KeyBindingsManager;
-import theomenden.polyprolene.mixin.keys.KeyBindAccessor;
 import theomenden.polyprolene.utils.MathUtils;
 import theomenden.polyprolene.utils.RenderUtils;
 

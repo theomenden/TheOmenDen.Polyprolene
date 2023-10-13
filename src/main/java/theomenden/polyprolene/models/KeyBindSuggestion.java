@@ -6,7 +6,6 @@ import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.ScreenshotRecorder;
 import net.minecraft.text.Text;
-import theomenden.polyprolene.mixin.keys.KeyBindAccessor;
 
 import java.util.Arrays;
 import java.util.function.Consumer;
@@ -14,11 +13,11 @@ import java.util.function.Consumer;
 import static theomenden.polyprolene.models.AutoCompleteResult.addToSuggestionHistory;
 
 public class KeyBindSuggestion {
+    private final String searchText;
     public Text name;
     public Text category;
     public KeyBinding initialBinding;
     public boolean isAFavorite = false;
-    private final String searchText;
 
     public KeyBindSuggestion(KeyBinding binding) {
         initialBinding = binding;
