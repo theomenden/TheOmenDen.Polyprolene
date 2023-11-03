@@ -6,14 +6,8 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "fabricapi.KeyBindingRegistryImplAccessorMixin",
-    "keys.KeyBindAccessor",
-    "keys.KeyBindingMixin",
-    "keys.KeyBindingRegistryAccessor",
-    "keys.KeyboardMixin",
-    "keys.StickyKeyAccessor",
-    "keys.StickyKeyMixin",
-    "screens.ControlOptionsScreenMixin",
-    "screens.TitleScreenMixin"
+    "keys.KeyBindingAccessor",
+    "screens.ControlOptionsScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

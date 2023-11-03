@@ -6,7 +6,9 @@
     "Alu"
   ],
   "contact": {
-    "repo": "https://github.com/andre/TheOmenDen.Polyprolene"
+    "homepage": "https://github.com/andre/TheOmenDen.Polyprolene",
+    "sources": "https://github.com/andre/TheOmenDen.Polyprolene",
+    "issues": "https://github.com/andre/TheOmenDen.Polyprolene/issues"
   },
   "custom": {
     "modmenu": {
@@ -17,7 +19,6 @@
     }
   },
   "depends": {
-    "fabricloader": ">=${loader_version}",
     "fabric": "*",
     "minecraft": "*"
   },

@@ -1,9 +1,9 @@
 plugins {
     id 'java-library'
-    id 'fabric-loom' version '1.4.1'
+    id 'fabric-loom' version '1.4.+'
     id 'maven-publish'
     id 'com.modrinth.minotaur' version '2.+'
-    id "io.freefair.lombok" version "8.3"
+    id "io.freefair.lombok" version "8.+"
 }
 
 version = project.mod_version
@@ -36,7 +36,7 @@ dependencies {
     modApi("com.terraformersmc:modmenu:${project.modmenu_version}") {
         exclude(group: 'net.fabricmc.fabric.fabric-api')
     }
-    modApi(include("de.siphalor:amecsapi-1.20:$amecs_api_version")) {
+    modApi("de.siphalor:amecsapi-${project.minecraft_major}:${project.amecs_api_version}+mc1.20.2") {
         exclude group: "net.fabric.fabric-api"
     }
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
